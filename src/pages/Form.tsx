@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import styles from '@/styles/Form.css';
 import Link from "next/link";
+import {useRouter} from "next/router";
 
 export default function Form() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
+    const router = useRouter();
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
@@ -17,7 +19,7 @@ export default function Form() {
         };
 
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
-        alert('Formulaire soumis avec succès !');
+        router.push("/ChatHome")
     };
 
     const handleInputChange = (event) => {
