@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import styles from '@/styles/Form.css';
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -7,6 +7,15 @@ export default function Form() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        const existingInfo = localStorage.getItem('userInfo');
+        if(existingInfo){
+            router.push("/ChatHome")
+        } else {
+            router.push("/Form")
+        }
+    });
 
     const router = useRouter();
     const handleFormSubmit = (event) => {
@@ -18,7 +27,10 @@ export default function Form() {
             password: password
         };
 
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        const existingInfo = localStorage.getItem('userInfo');
+        const combinedInfo = existingInfo ? {...JSON.parse(existingInfo), ...userInfo} : userInfo;
+
+        localStorage.setItem('userInfo', JSON.stringify(combinedInfo));
         router.push("/ChatHome")
     };
 
