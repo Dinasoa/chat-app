@@ -1,38 +1,44 @@
 import {useRouter} from "next/router";
+import styles from '@/styles/Chat.module.css';
 
 export default function ChatHome () {
     const router = useRouter();
+    const deleteLocalStorage = () => {
+        localStorage.removeItem("userInfo");
+        router.push("/Form")
+    }
+
     return(
         <>
-            <div className="chat-container">
-                <div className="chat-header">
+            <div className={`${styles.chatContainer}`}>
+                <div className={`${styles.chatHeader}`}>
                     <h1>Chat App</h1>
                 </div>
-                <div className="chat-messages">
-                    <div className="message">
-                        <div className="message-header">
-                            <span className="message-sender">User 1</span>
-                            <span className="message-timestamp">10:30am</span>
+                <div className={`${styles.chatMessages}`}>
+                    <div className={`${styles.message}`}>
+                        <div className={`${styles.message}`}>
+                            <span className={`${styles.messageSender}`}>User 1</span>
+                            <span className={`${styles.messageTimestamp}`}>10:30am</span>
                         </div>
-                        <div className="message-body">
+                        <div className={`${styles.messageBody}`}>
                             <p>Hello, how are you?</p>
                         </div>
                     </div>
-                    <div className="message self">
-                        <div className="message-header">
-                            <span className="message-sender">Me</span>
-                            <span className="message-timestamp">10:35am</span>
+                    <div className={`${styles.messageSelf}`}>
+                        <div className={`${styles.messageHeader}`}>
+                            <span className={`${styles.messageSender}`}>Me</span>
+                            <span className={`${styles.messageTimestamp}`}>10:35am</span>
                         </div>
-                        <div className="message-body">
+                        <div className={`${styles.messageBody}`}>
                             <p>I'm good, thanks for asking.</p>
                         </div>
                     </div>
                 </div>
-                <div className="chat-input">
+                <div className={`${styles.chatInput}`}>
                     <input type="text" placeholder="Type your message here"/>
                     <button>Send</button>
                 </div>
-                <button className="button" type="submit" onClick={() => router.push("/Form")}>
+                <button className={`${styles.button}`} type="submit" onClick={deleteLocalStorage}>
                     Logout
                 </button>
             </div>

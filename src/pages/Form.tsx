@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import styles from '@/styles/Form.css';
+import styles from '@/styles/Form.module.css';
 import Link from "next/link";
 import {useRouter} from "next/router";
 
@@ -27,10 +27,10 @@ export default function Form() {
             password: password
         };
 
-        const existingInfo = localStorage.getItem('userInfo');
-        const combinedInfo = existingInfo ? {...JSON.parse(existingInfo), ...userInfo} : userInfo;
+        // const existingInfo = localStorage.getItem('userInfo');
+        // const combinedInfo = existingInfo ? {...JSON.parse(existingInfo), ...userInfo} : userInfo;
 
-        localStorage.setItem('userInfo', JSON.stringify(combinedInfo));
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
         router.push("/ChatHome")
     };
 
@@ -49,14 +49,14 @@ export default function Form() {
 
     return (
         <>
-            <div className="card">
-                <form className="form" onSubmit={handleFormSubmit}>
+            <div className={`${styles.card}`}>
+                <form className={`${styles.form}`} onSubmit={handleFormSubmit}>
                     <div className="email-section">
-                        <label htmlFor="email" className="label">
+                        <label htmlFor="email" className={`${styles.label}`}>
                             Email
                         </label>
                         <input
-                            className="input"
+                            className={`${styles.input}`}
                             id="email"
                             name="email"
                             type="email"
@@ -65,11 +65,11 @@ export default function Form() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="name" className="label">
+                        <label htmlFor="name" className={`${styles.label}`}>
                             Name
                         </label>
                         <input
-                            className="input"
+                            className={`${styles.input}`}
                             id="name"
                             name="name"
                             type="text"
@@ -78,11 +78,11 @@ export default function Form() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="password" className="label">
+                        <label htmlFor="password" className={`${styles.label}`}>
                             Password
                         </label>
                         <input
-                            className="input"
+                            className={`${styles.input}`}
                             id="password"
                             name="password"
                             type="password"
@@ -92,7 +92,7 @@ export default function Form() {
                     </div>
 
                     <Link href="/ChatHome">
-                        <button className="button" type="submit" onClick={handleFormSubmit}>
+                        <button className={`${styles.button}`}type="submit" onClick={handleFormSubmit}>
                         Se connecter
                         </button>
                     </Link>
