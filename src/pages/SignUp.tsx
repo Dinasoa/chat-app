@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
 import styles from '@/styles/Form.module.css';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { BASE_URL } from '@/providers/base';
+import Link from "next/link";
 
 export default function SignUp() {
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm();
+
     const api = axios.create({
         baseURL: BASE_URL,
     });
@@ -20,7 +20,7 @@ export default function SignUp() {
             localStorage.setItem('userInfo', JSON.stringify(data));
             router.push("/ChatHome");
         } catch (error) {
-            console.log("THIS IS THE ERROR", error);
+            console.log("ERROR: ", error);
         }
     };
 
@@ -72,6 +72,11 @@ export default function SignUp() {
                     <button className={`${styles.button}`} type="submit">
                         S'inscrire
                     </button>
+
+                    <p>Vous avez déjà un compte? Cliquez ici: </p>
+                    <Link href="/SignIn">
+                        Se connecter
+                    </Link>
                 </form>
             </div>
         </>

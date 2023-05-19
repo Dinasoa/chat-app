@@ -2,52 +2,34 @@ import {useEffect, useState} from 'react';
 import styles from '@/styles/Form.module.css';
 import Link from "next/link";
 import {NextRouter, useRouter} from "next/router";
-import axios from 'axios';
+import {useForm} from "react-hook-form";
+import {BASE_URL} from "@/providers/base";
+import axios from "axios";
 
 export default function SignIn() {
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
-    const router: NextRouter = useRouter();
+    const router = useRouter();
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const [error, setError] = useState();
+    const api = axios.create({
+        baseURL: BASE_URL,
+    });
 
-    useEffect(() => {
-        const existingInfo = localStorage.getItem('userInfo');
-        if(existingInfo){
-            router.push("/ChatHome")
-        } else {
-            router.push("/SignIn")
-        }
-    }, [email, name, password]);
-
-    const handleFormSubmit = (event) => {
-        event.preventDefault();
-
-        const userInfo = {
-            email: email,
-            name: name,
-            password: password
-        };
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
-        router.push("/ChatHome")
-    };
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const eventName = event.target.name;
-        const value = event.target.value;
-
-        if (eventName === 'email') {
-            setEmail(value);
-        } else if (eventName === 'name') {
-            setName(value);
-        } else if (eventName === 'password') {
-            setPassword(value);
+    const onSubmit = async (data) => {
+        try {
+            const response = await api.post('/users/login', data);
+            console.log("RESPONSE: ", response.data);
+            localStorage.setItem('userInfo', JSON.stringify(data));
+            router.push("/ChatHome");
+        } catch (error) {
+            console.log("ERROR: ", error);
+            setError(error)
         }
     };
 
     return (
         <>
             <div className={`${styles.card}`}>
-                <form className={`${styles.form}`} onSubmit={handleFormSubmit}>
+                <form className={`${styles.form}`} onSubmit={handleSubmit(onSubmit)}>
                     <div className="email-section">
                         <label htmlFor="email" className={`${styles.label}`}>
                             Email
@@ -57,22 +39,9 @@ export default function SignIn() {
                             id="email"
                             name="email"
                             type="email"
-                            value={email}
-                            onChange={handleInputChange}
+                            {...register('email', { required: true })}
                         />
-                    </div>
-                    <div>
-                        <label htmlFor="name" className={`${styles.label}`}>
-                            Name
-                        </label>
-                        <input
-                            className={`${styles.input}`}
-                            id="name"
-                            name="name"
-                            type="text"
-                            value={name}
-                            onChange={handleInputChange}
-                        />
+                        {errors.email && <p>Ce champ est obligatoire.</p>}
                     </div>
                     <div>
                         <label htmlFor="password" className={`${styles.label}`}>
@@ -83,16 +52,14 @@ export default function SignIn() {
                             id="password"
                             name="password"
                             type="password"
-                            value={password}
-                            onChange={handleInputChange}
+                            {...register('password', { required: true, minLength: 8 })}
                         />
+                        {errors.password?.type === 'required' && <p>Ce champ est obligatoire.</p>}
                     </div>
-
-                    <Link href="/ChatHome">
-                        <button className={`${styles.button}`} type="submit" onClick={handleFormSubmit}>
+                    <button className={`${styles.button}`} type="submit">
                         Se connecter
-                        </button>
-                    </Link>
+                    </button>
+
                     <p>Pas de compte, cliquez ici: </p>
                     <Link href="/SignUp">
                         S'inscrire
