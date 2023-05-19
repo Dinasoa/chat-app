@@ -2,6 +2,7 @@ import {useRouter} from "next/router";
 import styles from '@/styles/Chat.module.css';
 import Head from "next/head"
 import {useState} from "react";
+import Link from "next/link";
 export default function Board () {
 
     const [message, setMessage] = useState('');
@@ -9,7 +10,10 @@ export default function Board () {
 
     const handleMessageChange = (e) => {
         setMessage(e.target.value);
+        localStorage.removeItem("userInfo")
+        router.push("/SignIn")
     };
+
 
     const handleSendMessage = () => {
         if (message.trim() !== '') {
@@ -22,10 +26,10 @@ export default function Board () {
             setMessage('');
         }
     };
-    const router = useRouter();
+    const {push} = useRouter();
     const deleteLocalStorage = () => {
         localStorage.removeItem("userInfo");
-        router.push("/SignIn")
+        push("/SignIn")
     }
 
     return(
@@ -64,6 +68,11 @@ export default function Board () {
                         </div>
                     </main>
                 </div>
+                <Link href="/SignIn">
+                    <button className={`${styles.button}`}  onClick={deleteLocalStorage}>
+                     Logout
+                    </button>
+                </Link>
             </div>
         </>
     )

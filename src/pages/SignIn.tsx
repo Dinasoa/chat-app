@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import styles from '@/styles/Form.module.css';
 import Link from "next/link";
 import {NextRouter, useRouter} from "next/router";
+import axios from 'axios';
 
 export default function SignIn() {
     const [email, setEmail] = useState('');
@@ -26,7 +27,6 @@ export default function SignIn() {
             name: name,
             password: password
         };
-
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
         router.push("/ChatHome")
     };
