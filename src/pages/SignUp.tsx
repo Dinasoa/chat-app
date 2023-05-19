@@ -4,20 +4,21 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { BASE_URL } from '@/providers/base';
 import Link from "next/link";
+import {api} from "@/providers/api";
+import {useAuthStore} from "@/stores/auth-store";
 
 export default function SignUp() {
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm();
-
-    const api = axios.create({
-        baseURL: BASE_URL,
-    });
+    const {setUser, user} = useAuthStore();
 
     const onSubmit = async (data) => {
         try {
             const response = await api.post('/users', data);
             console.log("RESPONSE: ", response.data);
             localStorage.setItem('userInfo', JSON.stringify(data));
+            setUser(response.data.user)
+            console.log("This is the user: ", user)
             router.push("/ChatHome");
         } catch (error) {
             console.log("ERROR: ", error);

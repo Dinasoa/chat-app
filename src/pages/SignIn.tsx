@@ -1,28 +1,25 @@
-import {useEffect, useState} from 'react';
 import styles from '@/styles/Form.module.css';
 import Link from "next/link";
 import {NextRouter, useRouter} from "next/router";
 import {useForm} from "react-hook-form";
-import {BASE_URL} from "@/providers/base";
-import axios from "axios";
+import {useAuthStore} from "@/stores/auth-store";
+import {api} from "@/providers/api";
 
 export default function SignIn() {
-    const router = useRouter();
+    const router : NextRouter = useRouter();
+    const {setUser, user} = useAuthStore();
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [error, setError] = useState();
-    const api = axios.create({
-        baseURL: BASE_URL,
-    });
 
     const onSubmit = async (data) => {
         try {
             const response = await api.post('/users/login', data);
             console.log("RESPONSE: ", response.data);
             localStorage.setItem('userInfo', JSON.stringify(data));
-            router.push("/ChatHome");
+            setUser(response.data.user)
+            console.log("This is the user: ", user)
+            await router.push("/ChatHome");
         } catch (error) {
             console.log("ERROR: ", error);
-            setError(error)
         }
     };
 
