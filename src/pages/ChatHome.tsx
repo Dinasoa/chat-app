@@ -7,8 +7,9 @@ import {useAuthStore} from "@/stores/auth-store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {router} from "next/client";
-import {faAdd, faClose} from "@fortawesome/free-solid-svg-icons";
+import {faAdd, faClose, faLongArrowRight} from "@fortawesome/free-solid-svg-icons";
 import {Channel} from "../model/Channel"
+import {useChannelStore} from "@/stores/channel-store";
 
 export default function Board () {
     const {push} = useRouter();
@@ -16,8 +17,9 @@ export default function Board () {
     const { user } = useAuthStore();
     const [channels, setChannels] = useState<Channel>();
     const [showCreateChannel, setShowCreateChannel] = useState(false);
+    const {setChannel, channel} = useChannelStore();
 
-    const deleteLocalStorage = () => {
+    const deconnect = () => {
         localStorage.removeItem("userInfo");
         push("/SignIn")
     }
@@ -63,15 +65,12 @@ export default function Board () {
         //    axios.post("/channels")
         let token = user?.token
         try {
-            const response = await api.post('/channel', {
-
-            },{
+            const response = await api.post('/channel',{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             console.log("RESPONSE: ", response.data);
-            setChannels(response.data);
         } catch (error) {
             console.log("BEARER: ", token)
             console.log("ERROR: ", error);
@@ -89,8 +88,13 @@ export default function Board () {
                         <button><i className="fas fa-search"></i></button>
                         <FontAwesomeIcon
                             icon={faUser}
-                            style={{ width: 25, color: "black"}}
+                            style={{ width: 15, color: "black"}}
                             onClick={displayUser}
+                        />
+                        <FontAwesomeIcon
+                            icon={faLongArrowRight}
+                            style={{ width: 15, color: "black"}}
+                            onClick={deconnect}
                         />
                     </div>
 
@@ -115,14 +119,9 @@ export default function Board () {
                                     </>
                                 )})
                             }
-
                         </ul>
-                        {/*<ul>*/}
-                        {/*    {channels.map(channel => (*/}
-                        {/*        <li className={styles.li} key={channel.id}>{channel.name}</li>*/}
-                        {/*))}*/}
-                        {/*</ul>*/}
                     </aside>
+
                     <main className={styles.chat}>
                         <div className={styles.chatHistory}>
                         </div>
@@ -133,7 +132,7 @@ export default function Board () {
                     </main>
                 </div>
                 <Link href="/SignIn">
-                    <button className={`${styles.button}`}  onClick={deleteLocalStorage}>
+                    <button className={`${styles.button}`}  onClick={deconnect}>
                      Logout
                     </button>
                 </Link>

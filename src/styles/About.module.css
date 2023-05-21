@@ -1,4 +1,5 @@
 /* index.module.css */
+
 .navbar {
     background-color: #f2f2f2;
     padding: 10px;
@@ -114,13 +115,13 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 99%;
+    width:99%;
     position: absolute;
-    top: 15%;
+    top: 20%;
     left: 25%;
     background-color: #490b49;
-    width: 50%;
-    height: 50%;
+    width:50%;
+    height: 75%;
     border-radius: 50px;
 }
 
@@ -171,3 +172,7 @@
     border-radius: 5px
 }
 
+.group{
+    display: flex;
+    flex-direction: row;
+}
