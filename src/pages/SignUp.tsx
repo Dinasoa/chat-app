@@ -40,7 +40,7 @@ export default function SignUp() {
                             type="email"
                             {...register('email', { required: true })}
                         />
-                        {errors.email && <p>Ce champ est obligatoire.</p>}
+                        {errors.email && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
                     </div>
                     <div>
                         <label htmlFor="name" className={`${styles.label}`}>
@@ -53,7 +53,7 @@ export default function SignUp() {
                             type="text"
                             {...register('name', { required: true })}
                         />
-                        {errors.name && <p>Ce champ est obligatoire.</p>}
+                        {errors.name && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
                     </div>
                     <div>
                         <label htmlFor="password" className={`${styles.label}`}>
@@ -66,8 +66,8 @@ export default function SignUp() {
                             type="password"
                             {...register('password', { required: true, minLength: 8 })}
                         />
-                        {errors.password?.type === 'required' && <p>Ce champ est obligatoire.</p>}
-                        {errors.password?.type === 'minLength' && <p>Le mot de passe doit contenir au moins 8 caractères.</p>}
+                        {errors.password?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
+                        {errors.password?.type === 'minLength' && <p style={{color: "red"}}>Le mot de passe doit contenir au moins 8 caractères.</p>}
                     </div>
 
                     <button className={`${styles.button}`} type="submit">

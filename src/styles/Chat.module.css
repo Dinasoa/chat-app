@@ -107,6 +107,7 @@
 .li{
     margin: 30px;
     font-family: cursive;
+    cursor: pointer;
 }
 
 .createChannel{
