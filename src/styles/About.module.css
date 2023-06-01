@@ -93,6 +93,7 @@
     padding: 10px;
     color: black;
     background-color: grey;
+    cursor: pointer;
 }
 
 .channelButton{

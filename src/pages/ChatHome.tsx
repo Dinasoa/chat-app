@@ -16,6 +16,7 @@ export default function Board() {
     const token = user?.token;
     const [users, setUsers] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [currentChannel, setCurrentChannel] = useState();
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
@@ -115,7 +116,9 @@ export default function Board() {
         try{
             // TODO: ADD THE ENDPOINT TO ADD MEMBERS IN A CHANNEL
             // TODO: SEE THE REQUEST BODY OF THE ADD MEMBERS IN A CHANNEL REQUEST
-            const responses = await api.post("/channels", data, {
+            // DATA IS AN OBJECT CONTAINING LIST OF MEMBERS WE'D LIKE TO ADD IN THE CHANNEL
+            // {"members":["6"]}
+            const responses = await api.post("/channels/{channel_id}/members", data, {
                 "headers": {
                     Authorization: `Bearer ${token}`
                 }
@@ -188,8 +191,11 @@ export default function Board() {
                         </ul>
                     </aside>
 
+                    {/* TODO: Implement the chat logic (use FCM if possible) however use the existent request in the back-end. */}
                     <main className={styles.chat}>
-                        <div className={styles.chatHistory}></div>
+                        {/* TODO: Put the messages exchanged in this section. */}
+                        <div className={styles.chatHistory}>
+                        </div>
                         <div className={styles.chatInput}>
                             <input type="text" placeholder="Type a message..." />
                             <button>Send</button>
