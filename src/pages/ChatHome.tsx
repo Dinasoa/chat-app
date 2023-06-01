@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/providers/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faAdd, faClose, faLongArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { useChannelStore } from "@/stores/channel-store";
+import {faUser, faAdd, faClose, faLongArrowRight, faSearch} from "@fortawesome/free-solid-svg-icons";
 import { useForm } from "react-hook-form";
 
 export default function Board() {
@@ -81,6 +80,7 @@ export default function Board() {
 
     const getChannelById = async (channelId) => {
         try {
+            // TODO: MAKE THE CHANNNEL_ID AS A REQUEST PARAM
             // CHANNEL_ID IS A REQUEST PARAM
             const response = await api.get(`/channel/${channelId}`);
             console.log("RESPONSE DATA: ", response.data);
@@ -107,24 +107,36 @@ export default function Board() {
     return (
         <>
             <div>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-
                 {/*__NAVIGATION BAR__*/}
                 <nav className={styles.navbar}>
+
                     <div className={styles.searchBar}>
                         <input type="text" placeholder="Rechercher..." />
-                        <button><i className="fas fa-search"></i></button>
+
+                        <button>
+                            <FontAwesomeIcon
+                                className={styles.icons}
+                                icon={faSearch}
+                                style={{ width: 15, color: "black" }}
+                            />
+                        </button>
+
                         <FontAwesomeIcon
+                            className={styles.icons}
                             icon={faUser}
                             style={{ width: 15, color: "black" }}
                             onClick={displayUser}
                         />
+
                         <FontAwesomeIcon
                             icon={faLongArrowRight}
+                            className={styles.icons}
                             style={{ width: 15, color: "black" }}
                             onClick={deconnect}
                         />
+
                     </div>
+
                 </nav>
 
                 {/*__SIDEBAR_NAVIGATION__ AND __CHAT_SECTION*/}

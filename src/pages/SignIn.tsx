@@ -4,8 +4,6 @@ import {NextRouter, useRouter} from "next/router";
 import {useForm} from "react-hook-form";
 import {useAuthStore} from "@/stores/auth-store";
 import {api} from "@/providers/api";
-import {inspect} from "util";
-import colors = module
 
 export default function SignIn() {
     const router : NextRouter = useRouter();
@@ -28,8 +26,9 @@ export default function SignIn() {
     return (
         <>
             <div className={`${styles.card}`}>
-                <form className={`${styles.form}`} onSubmit={handleSubmit(onSubmit)}>
-                    <div className="email-section">
+                <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+
+
                         <label htmlFor="email" className={`${styles.label}`}>
                             Email
                         </label>
@@ -41,8 +40,8 @@ export default function SignIn() {
                             {...register('email', { required: true })}
                         />
                         {errors.email && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
-                    </div>
-                    <div>
+
+
                         <label htmlFor="password" className={`${styles.label}`}>
                             Password
                         </label>
@@ -54,7 +53,7 @@ export default function SignIn() {
                             {...register('password', { required: true, minLength: 8 })}
                         />
                         {errors.password?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
-                    </div>
+
                     <button className={`${styles.button}`} type="submit">
                         Se connecter
                     </button>

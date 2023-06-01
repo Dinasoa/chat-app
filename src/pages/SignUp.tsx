@@ -21,6 +21,7 @@ export default function SignUp() {
             console.log("This is the user: ", user)
             router.push("/ChatHome");
         } catch (error) {
+            alert("Verify your data: " + error)
             console.log("ERROR: ", error);
         }
     };
@@ -29,7 +30,6 @@ export default function SignUp() {
         <>
             <div className={`${styles.card}`}>
                 <form className={`${styles.form}`} onSubmit={handleSubmit(onSubmit)}>
-                    <div className="email-section">
                         <label htmlFor="email" className={`${styles.label}`}>
                             Email
                         </label>
@@ -41,8 +41,7 @@ export default function SignUp() {
                             {...register('email', { required: true })}
                         />
                         {errors.email && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
-                    </div>
-                    <div>
+
                         <label htmlFor="name" className={`${styles.label}`}>
                             Name
                         </label>
@@ -54,8 +53,7 @@ export default function SignUp() {
                             {...register('name', { required: true })}
                         />
                         {errors.name && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
-                    </div>
-                    <div>
+
                         <label htmlFor="password" className={`${styles.label}`}>
                             Password
                         </label>
@@ -68,7 +66,7 @@ export default function SignUp() {
                         />
                         {errors.password?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
                         {errors.password?.type === 'minLength' && <p style={{color: "red"}}>Le mot de passe doit contenir au moins 8 caractères.</p>}
-                    </div>
+
 
                     <button className={`${styles.button}`} type="submit">
                         S'inscrire
