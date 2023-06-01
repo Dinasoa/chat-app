@@ -13,6 +13,7 @@ export default function Board() {
     const { user } = useAuthStore();
     const [channels, setChannels] = useState([]);
     const [showCreateChannel, setShowCreateChannel] = useState(false);
+    const [showAddMembers, setShowAddMembers] = useState(false);
     const token = user?.token;
     const [users, setUsers] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -26,6 +27,10 @@ export default function Board() {
         setShowCreateChannel(true);
         console.log(showCreateChannel);
     };
+
+    const showAddMembersForm = () => {
+        setShowAddMembers(true);
+    }
 
     const getChannels = async () => {
         const token = user?.token;
@@ -133,7 +138,14 @@ export default function Board() {
                                 onClick={displayUser}
                             />
                         </button>
-
+                        <button className={styles.channelButton} onClick={showAddMembersForm}>
+                            Add members
+                            <FontAwesomeIcon
+                                icon={faAdd}
+                                style={{ width: 10, color: "white" }}
+                                onClick={displayUser}
+                            />
+                        </button>
                         <ul>
                             {channels.map((channel) => (
                                 <li className={styles.li} key={channel.id} onClick={() => {getChannelById(channel.id)}}>
@@ -202,6 +214,57 @@ export default function Board() {
                     />
                     <button className={styles.button} onClick={handleSubmit(createChannel)}>Create Channel</button>
                 </div> : null}
+
+            {showAddMembers ?
+                <form>
+                    <div className={styles.createChannel}>
+                        <label htmlFor="name" className={styles.label}>
+                            Name
+                        </label>
+                        <input
+                            className={styles.input}
+                            id="name"
+                            name="name"
+                            type="text"
+                            {...register("name", { required: true })}
+                        />
+                        <label htmlFor="types" className={styles.label}>
+                            Type
+                        </label>
+                        <select
+                            className={styles.select}
+                            id="types"
+                            name="types"
+                            {...register("types", { required: true })}
+                        >
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                        <label htmlFor="members" className={styles.label}>
+                            Member
+                        </label>
+                        <select
+                            className={styles.select}
+                            id="members"
+                            name="members"
+                            {...register("members", { required: true })}
+                        >
+                            {/*TODO: display the members in the database and the value of the option will be the id of the user*/}
+                            {users.map((user) => (
+                                <option key={user.id} value={user.id}>
+                                    {user.name}
+                                </option>
+                            ))}
+                        </select>
+                        <FontAwesomeIcon
+                            icon={faClose}
+                            style={{ width: 15, color: "white" }}
+                            className={styles.close}
+                            onClick={undisplayUser}
+                        />
+                        <button className={styles.button} onClick={handleSubmit(createChannel)}>Create Channel</button>
+                    </div>
+                </form> : null}
 
         </>
     );
