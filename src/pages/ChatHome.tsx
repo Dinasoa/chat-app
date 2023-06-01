@@ -52,6 +52,7 @@ export default function Board() {
     useEffect(() => {
         getChannels();
         getAllUsers();
+        console.log("Value of the show add members: " + showAddMembers)
     }, []);
 
     const displayUser = () => {
@@ -104,6 +105,27 @@ export default function Board() {
         }
     };
 
+    const undispalyUserModal = () => {
+        setShowAddMembers(false)
+    }
+
+    const addMembersInChannel = async (data) => {
+        setShowAddMembers(false);
+
+        try{
+            // TODO: ADD THE ENDPOINT TO ADD MEMBERS IN A CHANNEL
+            // TODO: SEE THE REQUEST BODY OF THE ADD MEMBERS IN A CHANNEL REQUEST
+            const responses = await api.post("/channels", data, {
+                "headers": {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log(responses);
+        }catch(error){
+            alert("Error from the request: " + error);
+        }
+    }
+
     return (
         <>
             <div>
@@ -155,7 +177,6 @@ export default function Board() {
                             <FontAwesomeIcon
                                 icon={faAdd}
                                 style={{ width: 10, color: "white" }}
-                                onClick={displayUser}
                             />
                         </button>
                         <ul>
@@ -211,7 +232,6 @@ export default function Board() {
                         name="members"
                         {...register("members", { required: true })}
                     >
-                        {/*TODO: display the members in the database and the value of the option will be the id of the user*/}
                         {users.map((user) => (
                             <option key={user.id} value={user.id}>
                                 {user.name}
@@ -261,7 +281,6 @@ export default function Board() {
                             name="members"
                             {...register("members", { required: true })}
                         >
-                            {/*TODO: display the members in the database and the value of the option will be the id of the user*/}
                             {users.map((user) => (
                                 <option key={user.id} value={user.id}>
                                     {user.name}
@@ -272,9 +291,9 @@ export default function Board() {
                             icon={faClose}
                             style={{ width: 15, color: "white" }}
                             className={styles.close}
-                            onClick={undisplayUser}
+                            onClick={undispalyUserModal}
                         />
-                        <button className={styles.button} onClick={handleSubmit(createChannel)}>Create Channel</button>
+                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Add member(s)</button>
                     </div>
                 </form> : null}
 
