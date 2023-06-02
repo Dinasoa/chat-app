@@ -82,9 +82,11 @@ export default function Board() {
 
     const getChannelById = async (channelId) => {
         try {
-            // TODO: MAKE THE CHANNNEL_ID AS A REQUEST PARAM
-            // CHANNEL_ID IS A REQUEST PARAM
-            const response = await api.get(`/channel/${channelId}`);
+            const response = await api.get(`/channels/?channel_id=${channelId}`, {
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            });
             console.log("RESPONSE DATA: ", response.data);
         } catch (error) {
             console.log("ERROR: ", error);
