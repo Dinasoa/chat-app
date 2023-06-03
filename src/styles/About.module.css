@@ -3,6 +3,7 @@
 .navbar {
     background-color: #f2f2f2;
     padding: 10px;
+    margin: -5px -5px -5px -5px;
 }
 
 .searchBar {
@@ -23,6 +24,11 @@
     cursor: pointer;
 }
 
+.icons{
+    cursor: pointer;
+    padding-right: 15px;
+}
+
 .container {
     display: flex;
     flex-direction: row;
@@ -32,6 +38,8 @@
     width: 200px;
     background-color: #f2f2f2;
     padding: 10px;
+    margin-left: -5px;
+    height: 90vh;
 }
 
 .sidebar ul {
@@ -118,12 +126,12 @@
     align-items: center;
     width:99%;
     position: absolute;
-    top: 20%;
+    top: 15%;
     left: 25%;
     background-color: #490b49;
     width:50%;
     height: 75%;
-    border-radius: 50px;
+    border-radius: 25px;
 }
 
 

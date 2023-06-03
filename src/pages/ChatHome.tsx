@@ -1,22 +1,27 @@
 import { useRouter } from "next/router";
 import styles from "@/styles/Chat.module.css";
-import { useEffect, useState } from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import { api } from "@/providers/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faUser, faAdd, faClose, faLongArrowRight, faSearch} from "@fortawesome/free-solid-svg-icons";
 import { useForm } from "react-hook-form";
+import {Message} from "@/model/Message";
+import {useMessageStore} from "@/stores/message-store";
 
-export default function Board() {
+const  Board = () =>  {
     const router = useRouter();
     const { user } = useAuthStore();
+    const { messages, message, setMessage, setMessages} = useMessageStore();
     const [channels, setChannels] = useState([]);
     const [showCreateChannel, setShowCreateChannel] = useState(false);
     const [showAddMembers, setShowAddMembers] = useState(false);
+    const [membersToAdd , setMembersToAdd] = useState([]);
     const token = user?.token;
     const [users, setUsers] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [currentChannel, setCurrentChannel] = useState();
+    const [currentChannelId, setCurrentChannelId] = useState<number>();
+    const [recipientId, setRecipientId] = useState<number>();
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
@@ -54,7 +59,7 @@ export default function Board() {
         getChannels();
         getAllUsers();
         console.log("Value of the show add members: " + showAddMembers)
-    }, []);
+    }, channels);
 
     const displayUser = () => {
         router.push("/About");
@@ -76,7 +81,16 @@ export default function Board() {
             console.log("RESPONSE: ", response.data);
         } catch (error) {
             console.log("BEARER: ", token);
-            console.log("ERROR: ", error);
+            console.log("ERROR: ", error); try{
+            const responses = await api.get(`/messages/channel/${currentChannelId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log("Channel Message: ", responses.data)
+        } catch(error){
+            alert(error)
+        }
         }
     };
 
@@ -87,7 +101,8 @@ export default function Board() {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log("RESPONSE DATA: ", response.data);
+            setCurrentChannelId(channelId);
+            console.log("Channel Id and its messages: ", response.data);
         } catch (error) {
             console.log("ERROR: ", error);
         }
@@ -131,15 +146,51 @@ export default function Board() {
         }
     }
 
+    const sendMessage = async () => {
+        try{
+            const responses = await api.post("/message", message, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            console.log("Data: ", responses.data)
+        } catch (error) {
+            alert("There is an error. ")
+        }
+    }
+
+    const saveMessage = (event:ChangeEvent<HTMLInputElement>) => {
+        const message = {
+            "channelId": currentChannelId,
+            "recipientId": recipientId,
+            "content": event.target.value
+        }
+        setMessage(message);
+    }
+
+    const getChannelMessage = async () => {
+        try{
+            const responses = await api.get(`/messages/channel/${currentChannelId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setMessages(responses.data);
+            console.log(messages)
+            console.log("Channel Message: ", responses.data)
+        } catch(error){
+            alert(error)
+        }
+    }
+
     return (
         <>
             <div>
                 {/*__NAVIGATION BAR__*/}
                 <nav className={styles.navbar}>
-
                     <div className={styles.searchBar}>
                         <input type="text" placeholder="Rechercher..." />
-
                         <button>
                             <FontAwesomeIcon
                                 className={styles.icons}
@@ -148,12 +199,9 @@ export default function Board() {
                             />
                         </button>
 
-                        <FontAwesomeIcon
-                            className={styles.icons}
-                            icon={faUser}
-                            style={{ width: 15, color: "black" }}
-                            onClick={displayUser}
-                        />
+                        <svg style={{width:30}} onClick={displayUser} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.icons}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
 
                         <FontAwesomeIcon
                             icon={faLongArrowRight}
@@ -197,10 +245,18 @@ export default function Board() {
                     <main className={styles.chat}>
                         {/* TODO: Put the messages exchanged in this section. */}
                         <div className={styles.chatHistory}>
+                            {console.log("Les messages: ", messages)}
+                            {messages.messages.map(message =>
+                                <p>
+                                    {message.sender.name}:
+                                    {message.content}
+                                </p>
+                            )}
                         </div>
                         <div className={styles.chatInput}>
-                            <input type="text" placeholder="Type a message..." />
-                            <button>Send</button>
+                            <input type="text" placeholder="Type a message..." onChange={saveMessage}/>
+                            <button className={styles.button} onClick={sendMessage}>Send</button>
+                            <button className={styles.button} onClick={getChannelMessage}>Channel Message</button>
                         </div>
                     </main>
                 </div>
@@ -308,3 +364,5 @@ export default function Board() {
         </>
     );
 }
+
+export default Board;

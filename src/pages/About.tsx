@@ -1,6 +1,6 @@
 import styles from '@/styles/About.module.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBlender} from "@fortawesome/free-solid-svg-icons";
+import {faAdd, faBlender, faLongArrowLeft, faLongArrowRight, faSearch, faUser} from "@fortawesome/free-solid-svg-icons";
 import {useRouter} from "next/router";
 import {api} from "@/providers/api";
 import {useAuthStore} from "@/stores/auth-store";
@@ -19,6 +19,11 @@ export default function About () {
     const redirection = () => {
         push("/ChatHome")
     }
+
+    const deconnect = () => {
+        localStorage.removeItem("userInfo");
+        push("/SignIn");
+    };
 
     const getUserInfo = async () => {
         try {
@@ -40,6 +45,7 @@ export default function About () {
                     Authorization: `Bearer ${token}`
                 }
             });
+            alert("User has been updated successfully. " )
             console.log("DATA", response.data)
         }
         catch (error){
@@ -54,20 +60,51 @@ export default function About () {
 
     return(
         <>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
             <nav className={styles.navbar}>
                 <div className={styles.searchBar}>
                     <input type="text" placeholder="Rechercher..." />
-                    <button><i className="fas fa-search"></i></button>
-                    <FontAwesomeIcon icon={faBlender}
-                                     style={{width:15,color:"black"}}
-                                     onClick={redirection}
-                    ></FontAwesomeIcon>
+
+                    <button>
+                        <FontAwesomeIcon
+                            className={styles.icons}
+                            icon={faSearch}
+                            style={{ width: 15, color: "black" }}
+                        />
+                    </button>
+
+                    <FontAwesomeIcon
+                        className={styles.icons}
+                        icon={faUser}
+                        style={{ width: 15, color: "black" }}
+                        // onClick={displayUser}
+                    />
+                    <FontAwesomeIcon
+                        icon={faLongArrowLeft}
+                        className={styles.icons}
+                        style={{ width: 15, color: "black" }}
+                        onClick={() => {push("/ChatHome")}}
+                    />
+                    <FontAwesomeIcon
+                        icon={faLongArrowRight}
+                        className={styles.icons}
+                        style={{ width: 15, color: "black" }}
+                        onClick={deconnect}
+                    />
                 </div>
             </nav>
 
+            <div className={styles.container}>
+                <aside className={styles.sidebar}>
+                {/* ADD USER ICON */}
+
+                </aside>
+            </div>
+
             <form onSubmit={handleSubmit(updateUserInfo)}>
                 <div className={styles.createChannel}>
+                    <FontAwesomeIcon
+                        icon={faUser}
+                        style={{width: 25, color: "black"}}/>
                     <label htmlFor="email" className={styles.label}>
                         Email
                     </label>
