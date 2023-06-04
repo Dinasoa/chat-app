@@ -200,3 +200,8 @@
 .directMessage{
 
 }
+
+.userDirectMessage{
+    cursor: pointer;
+    list-style-type: circle;
+}

@@ -61,14 +61,18 @@ const  Board = () =>  {
         getAllUsers();
         getChannels();
     }, []);
-
+    //
     useEffect(() => {
         if(currentChannelId != undefined || recipientId != undefined){
             getChannelMessage(currentChannelId);
         }
-    }, [messages])
+    }, [])
 
     const displayUser = () => {
+    //     if(currentChannelId != undefined || recipientId != undefined){
+    //         getChannelMessage(currentChannelId);
+    //     }
+    // }, [messages])
         router.push("/About");
     };
 
@@ -163,12 +167,20 @@ const  Board = () =>  {
                     Authorization: `Bearer ${token}`
                 }
             });
-            const allMessages = await api.get(`/messages/channel/${currentChannelId}`, {
+            if(currentChannelId != null){
+                const allMessages = await api.get(`/messages/channel/${currentChannelId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                setMessages(allMessages.data)
+            }
+            const allMessages = await api.get(`/messages/${recipientId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            setMessages(allMessages.data)
+                setMessages(allMessages.data)
             console.log("Message sent: ", messagesToCreate.data)
         } catch (error) {
             alert("There is an error. ")
@@ -198,8 +210,22 @@ const  Board = () =>  {
         }
     }
 
-    const directMessage = (id) => {
+    const directMessage = async (id) => {
+        console.log("The current recipient id is: ", recipientId);
+        console.log("The current channel id is: ", currentChannelId)
         setRecipientId(id);
+        setCurrentChannelId(null)
+        try{
+            const responses = await api.get(`/messages/${recipientId}`,{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setMessages(responses.data.messages);
+            console.log("Direct message: ", responses.data)
+        } catch (error) {
+            alert(error)
+        }
     }
 
     return (
@@ -247,7 +273,7 @@ const  Board = () =>  {
                         <div className={styles.directMessage}>
                             <h3>Users: </h3>
                             {users.map((user) => (
-                                <li key={user?.id}>{user.name}</li>
+                                <li key={user?.id} onClick={() => directMessage(user.id)} className={styles.userDirectMessage}>{user.name}</li>
                             ))}
                         </div>
                         <ul>
@@ -271,8 +297,7 @@ const  Board = () =>  {
                                     }
                                 </h1>
                                 {
-
-                                    messages?.messages.length >= 1 && currentChannelId != undefined?
+                                    messages?.messages?.length >= 1 && currentChannelId != undefined?
                                         <div className={styles.chatHistory}>
                                             <button className={styles.channelButton} onClick={showAddMembersForm}>
                                                 Add members
