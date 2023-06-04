@@ -26,7 +26,7 @@ export default function SignIn() {
     return (
         <>
             <div className={`${styles.card}`}>
-                <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+                <form className={styles.loginForm} onSubmit={handleSubmit(onSubmit)}>
                         <label htmlFor="email" className={`${styles.label}`}>
                             Email
                         </label>

@@ -32,7 +32,10 @@ export default function About () {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log("DATA: ", response.data)
+
+            console.log("User informations: ", response.data)
+            console.log("Biography: ", user?.bio)
+
         } catch (error) {
             console.log("ERROR: ", error)
         }
@@ -45,6 +48,8 @@ export default function About () {
                     Authorization: `Bearer ${token}`
                 }
             });
+            setUser(response.data.user)
+            console.log("User should have been updated: ", user)
             alert("User has been updated successfully. " )
             console.log("DATA", response.data)
         }
@@ -84,12 +89,10 @@ export default function About () {
                         style={{ width: 15, color: "black" }}
                         onClick={() => {push("/ChatHome")}}
                     />
-                    <FontAwesomeIcon
-                        icon={faLongArrowRight}
-                        className={styles.icons}
-                        style={{ width: 15, color: "black" }}
-                        onClick={deconnect}
-                    />
+                    <button
+                        className={styles.logoutButton}
+                        onClick={deconnect}>Logout
+                    </button>
                 </div>
             </nav>
 
@@ -100,7 +103,7 @@ export default function About () {
                 </aside>
             </div>
 
-            <form onSubmit={handleSubmit(updateUserInfo)}>
+            <form onSubmit={handleSubmit(updateUserInfo)} className="editProfileForm">
                 <div className={styles.createChannel}>
                     <FontAwesomeIcon
                         icon={faUser}
@@ -113,7 +116,7 @@ export default function About () {
                         className={styles.input}
                         id="email"
                         name="email"
-                        placeholder={user?.email}
+                        value={user?.email}
                         {...register("email")}
                     />
                     <label htmlFor="name" className={styles.label}>
@@ -123,7 +126,7 @@ export default function About () {
                         className={styles.input}
                         id="name"
                         name="name"
-                        value={user?.name}
+                        placeholder={user?.name}
                         {...register("name")}
                     />
                     <label htmlFor="bio" className={styles.label}>
@@ -132,7 +135,7 @@ export default function About () {
                     <textarea
                         name="bio"
                         id="bio"
-                        placeholder={user?.bio}
+                        placeholder="bio"
                         {...register("bio")}
                     >
                     </textarea>

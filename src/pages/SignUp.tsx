@@ -28,8 +28,8 @@ export default function SignUp() {
 
     return (
         <>
-            <div className={`${styles.card}`}>
-                <form className={`${styles.form}`} onSubmit={handleSubmit(onSubmit)}>
+            <div className={styles.card}>
+                <form className={styles.registrationForm} onSubmit={handleSubmit(onSubmit)}>
                         <label htmlFor="email" className={`${styles.label}`}>
                             Email
                         </label>

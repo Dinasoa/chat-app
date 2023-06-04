@@ -18,12 +18,12 @@ const  Board = () =>  {
     const [channels, setChannels] = useState([]);
     const [showCreateChannel, setShowCreateChannel] = useState(false);
     const [showAddMembers, setShowAddMembers] = useState(false);
+    const [showUpdateChannel, setShowUpdateChannel] = useState(false);
     const token = user?.token;
     const [users, setUsers] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [currentChannelId, setCurrentChannelId] = useState<number>();
-    const [recipientId, setRecipientId] = useState<number>();
-    const [membersToAdd, setMembersToAdd] = useState([]);
+    const [currentChannelId, setCurrentChannelId] = useState<number>(1);
+    const [recipientId, setRecipientId] = useState<number>(1);
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
@@ -37,6 +37,10 @@ const  Board = () =>  {
 
     const showAddMembersForm = () => {
         setShowAddMembers(true);
+    }
+
+    const showUpdateChannelForm = () => {
+        setShowUpdateChannel(true);
     }
 
     const getChannels = async () => {
@@ -104,6 +108,10 @@ const  Board = () =>  {
 
     const getChannelById = async (channelId) => {
         try {
+            if(channelId == undefined){
+                setCurrentChannelId(1)
+            }
+
             const response = await api.get(`/channels/?channel_id=${channelId}`, {
                 headers:{
                     Authorization: `Bearer ${token}`
@@ -208,17 +216,10 @@ const  Board = () =>  {
         }
     }
 
-    const handleMembersInChannel = (event) => {
-        const members = event.target.value;
-        console.log("Les membres: ", members)
-        if (members !== "") {
-            setMembersToAdd([...membersToAdd, members]);
-        }
-    }
-
     const directMessage = async (id) => {
         console.log("The current recipient id is: ", recipientId);
         console.log("The current channel id is: ", currentChannelId)
+        setRecipientId(1)
         setCurrentChannelId(null)
         try{
             // TODO: even tho we click on the user to make a direct message, it only set the recipient id after two click
@@ -256,12 +257,11 @@ const  Board = () =>  {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
 
-                        <FontAwesomeIcon
-                            icon={faLongArrowRight}
-                            className={styles.icons}
-                            style={{ width: 15, color: "black" }}
-                            onClick={deconnect}
-                        />
+
+                        <button
+                            className={styles.logoutButton}
+                            onClick={deconnect}>Logout
+                        </button>
 
                     </div>
                 </nav>
@@ -303,34 +303,57 @@ const  Board = () =>  {
                                             </h1> : <h1></h1>
                                     }
                                 </h1>
+                                {currentChannelId != undefined ?
+                                    <div>
+                                        <button className={styles.channelButton} onClick={showAddMembersForm}>
+                                            Add members
+                                            <FontAwesomeIcon
+                                                icon={faAdd}
+                                                style={{ width: 10, color: "white" }}
+                                            />
+                                        </button>
+                                        <button className={styles.channelButton} onClick={showUpdateChannelForm}>
+                                            Update current channel
+                                            <FontAwesomeIcon
+                                                icon={faAdd}
+                                                style={{ width: 10, color: "white" }}
+                                            />
+                                        </button>
+                                    </div>
+                                    : null
+                                }
+
                                 {
-                                    messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId == undefined ?
+                                    messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId != undefined?
                                         <div className={styles.chatHistory}>
-                                            <button className={styles.channelButton} onClick={showAddMembersForm}>
-                                                Add members
-                                                <FontAwesomeIcon
-                                                    icon={faAdd}
-                                                    style={{ width: 10, color: "white" }}
-                                                />
-                                            </button>
+
+
 
                                             {/*TODO: display here the members in the channel*/}
-                                            <h1> You are in the channel number_{currentChannelId} </h1>
-                                            {messages?.messages?.map(message =>
+                                            {recipientId != undefined && currentChannelId == undefined ?
+                                                <h1> Direct Message: {recipientId} </h1>
+                                                :
+                                                <div>
+                                                    <h1> You are in the channel number_{currentChannelId} </h1>
+                                                </div>
+                                            }
+
+                                            {
+                                                messages?.messages?.map(message =>
                                                 <p>
                                                     {message.sender.name}:
                                                     {message.content}
                                                 </p>
-                                            )}
+                                                )
+                                            }
                                         </div>
-                                    :<p>No message to display</p>
-
+                                    : <p>No message to display</p>
                                 }
                             </div>
 
                         <div className={styles.chatInput}>
-                            <input type="text" placeholder="Type a message..." onChange={saveMessage}/>
-                            <button className={styles.button} onClick={sendMessage}>Send</button>
+                            <textarea className={styles.textarea} type="text" name="message" placeholder="Type a message..." onChange={saveMessage}></textarea>
+                            <button className={styles.sendMessageButton} onClick={sendMessage}>Send</button>
                         </div>
                     </main>
                 </div>
@@ -338,78 +361,63 @@ const  Board = () =>  {
 
 
             {showCreateChannel ?
-                <div className={styles.createChannel}>
-                    <label htmlFor="name" className={styles.label}>
-                        Name
-                    </label>
-                    <input
-                        className={styles.input}
-                        id="channelName"
-                        name="channelName"
-                        type="text"
-                        {...register("channelName", { required: true })}
-                    />
-                    <label htmlFor="type" className={styles.label}>
-                        Type
-                    </label>
-                    <select
-                        className={styles.select}
-                        id="type"
-                        name="type"
-                        {...register("type", { required: true })}
-                    >
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
-                    </select>
-                    <label htmlFor="members" className={styles.label}>
-                        Member
-                    </label>
-                    <select
-                        className={styles.select}
-                        id="members"
-                        name="members"
-                        onChange={handleMembersInChannel}
-                        {...register("members", { required: true })}
-                    >
-                        {users.map((user) => (
-                            <option key={user.id} value={user.id}>
-                                {user.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <div>
-                        {membersToAdd.map((value, index) => (
-                            <div key={index}>
-                                <input type="checkbox" value={value} checked={true}/>
-                                <label>{value}</label>
-                            </div>
-                        ))}
-                    </div>
-
-                    <FontAwesomeIcon
-                        icon={faClose}
-                        style={{ width: 15, color: "white" }}
-                        className={styles.close}
-                        onClick={undisplayUser}
-                    />
-                    {/*TODO: edit channel*/}
-                    <button className={styles.createChannelButton} onClick={handleSubmit(createChannel)}>Create Channel</button>
-                </div> : null}
-
-            {showAddMembers ?
-                <form>
+                <form className="createChannelForm">
                     <div className={styles.createChannel}>
                         <label htmlFor="name" className={styles.label}>
                             Name
                         </label>
                         <input
                             className={styles.input}
-                            id="name"
-                            name="name"
+                            id="channelName"
+                            name="channelName"
                             type="text"
-                            {...register("name", { required: true })}
+                            {...register("channelName", { required: true })}
                         />
+                        <label htmlFor="type" className={styles.label}>
+                            Type
+                        </label>
+                        <select
+                            className={styles.select}
+                            id="type"
+                            name="type"
+                            {...register("type", { required: true })}
+                        >
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                        <label htmlFor="members" className={styles.label}>
+                            Member
+                        </label>
+                        <select
+                            className={styles.select}
+                            id="members"
+                            name="members"
+                            {...register("members", { required: true })}
+                        >
+                            {users.map((user) => (
+                                <option key={user.id} value={user.id}>
+                                    {user.name}
+                                </option>
+                            ))}
+                        </select>
+
+
+                        <FontAwesomeIcon
+                            icon={faClose}
+                            style={{ width: 15, color: "white" }}
+                            className={styles.close}
+                            onClick={undisplayUser}
+                        />
+                        {/*TODO: edit channel*/}
+                        <button className={styles.createChannelButton} onClick={handleSubmit(createChannel)}>Create Channel</button>
+                    </div>
+                </form>
+                : null}
+
+            {showUpdateChannel?
+                <form className="editChannelForm">
+                    <div className={styles.createChannel}>
+
                         <label htmlFor="types" className={styles.label}>
                             Type
                         </label>
@@ -422,6 +430,14 @@ const  Board = () =>  {
                             <option value="public">Public</option>
                             <option value="private">Private</option>
                         </select>
+                        <button onClick={() => setShowUpdateChannel(false)}>Close</button>
+                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Update Channel</button>
+                    </div>
+                </form> : null}
+
+            {showAddMembers ?
+                <form>
+                    <div className={styles.createChannel}>
                         <label htmlFor="members" className={styles.label}>
                             Member
                         </label>

@@ -24,6 +24,24 @@
     width: 100%;
 }
 
+.registrationForm{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 300px;
+    width: 100%;
+}
+
+.loginForm{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 300px;
+    width: 100%;
+}
+
 .label {
     font-size: 16px;
     font-weight: bold;

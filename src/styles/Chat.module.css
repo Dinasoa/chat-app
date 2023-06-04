@@ -147,7 +147,7 @@
     background-color: #490b49;
     width: 50%;
     height: 50%;
-    border-radius: 50px;
+    border-radius: 20px;
 }
 
 
@@ -204,4 +204,22 @@
 .userDirectMessage{
     cursor: pointer;
     list-style-type: circle;
+}
+
+.sendMessageButton{
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: black;
+    background-color: grey;
+    cursor: pointer;
+}
+
+.textarea{
+    width: 75vw;
+}
+
+.logoutButton{
+    background-color: #490b49;
+    cursor: pointer;
 }

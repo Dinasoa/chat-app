@@ -193,3 +193,8 @@
     display: flex;
     flex-direction: row;
 }
+
+.logoutButton{
+    background-color: #490b49;
+    cursor: pointer;
+}
