@@ -61,10 +61,16 @@ const  Board = () =>  {
         getAllUsers();
         getChannels();
     }, []);
-    //
+
     useEffect(() => {
-        if(currentChannelId != undefined || recipientId != undefined){
+        if(currentChannelId != undefined && recipientId == undefined){
             getChannelMessage(currentChannelId);
+        }
+        if(currentChannelId == undefined && recipientId != undefined){
+            directMessage(recipientId);
+        }
+        if(currentChannelId == undefined && recipientId == undefined){
+            console.log("No message to display. ")
         }
     }, [])
 
@@ -213,9 +219,10 @@ const  Board = () =>  {
     const directMessage = async (id) => {
         console.log("The current recipient id is: ", recipientId);
         console.log("The current channel id is: ", currentChannelId)
-        setRecipientId(id);
         setCurrentChannelId(null)
         try{
+            // TODO: even tho we click on the user to make a direct message, it only set the recipient id after two click
+            setRecipientId(id);
             const responses = await api.get(`/messages/${recipientId}`,{
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -291,13 +298,13 @@ const  Board = () =>  {
                             <div className={styles.chatHistory}>
                                 <h1>
                                     {
-                                        currentChannelId == undefined ? <h1>
+                                        currentChannelId == undefined && recipientId == undefined ? <h1>
                                             Please select a channel or a direct message
                                             </h1> : <h1></h1>
                                     }
                                 </h1>
                                 {
-                                    messages?.messages?.length >= 1 && currentChannelId != undefined?
+                                    messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId == undefined ?
                                         <div className={styles.chatHistory}>
                                             <button className={styles.channelButton} onClick={showAddMembersForm}>
                                                 Add members
@@ -309,7 +316,7 @@ const  Board = () =>  {
 
                                             {/*TODO: display here the members in the channel*/}
                                             <h1> You are in the channel number_{currentChannelId} </h1>
-                                            {messages.messages.map(message =>
+                                            {messages?.messages?.map(message =>
                                                 <p>
                                                     {message.sender.name}:
                                                     {message.content}
