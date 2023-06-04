@@ -26,6 +26,7 @@ const  Board = () =>  {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [currentChannelId, setCurrentChannelId] = useState<number>();
     const [recipientId, setRecipientId] = useState<number>();
+    const [membersToAdd, setMembersToAdd] = useState([]);
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
@@ -65,6 +66,12 @@ const  Board = () =>  {
         console.log("Value of the show add members: " + showAddMembers)
     }, []);
 
+    useEffect(() => {
+        if(currentChannelId != undefined || recipientId != undefined){
+            getChannelMessage(currentChannelId);
+        }
+    }, [messages])
+
     const displayUser = () => {
         router.push("/About");
     };
@@ -75,6 +82,7 @@ const  Board = () =>  {
 
     const createChannel = async (data) => {
         setShowCreateChannel(false);
+        console.log("Channel to create: ", data)
         const token = user?.token;
         try {
             const response = await api.post('/channel', data, {
@@ -82,7 +90,7 @@ const  Board = () =>  {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("RESPONSE: ", response.data);
+            console.log("Channel to create: ", response.data);
         }  catch(error){
             alert(error)
         }
@@ -166,7 +174,6 @@ const  Board = () =>  {
             })
             setMessages(allMessages.data)
             console.log("Message sent: ", messagesToCreate.data)
-            alert("Success")
         } catch (error) {
             alert("There is an error. ")
         }
@@ -184,6 +191,14 @@ const  Board = () =>  {
             console.log("Channel Message: ", responses.data)
         } catch(error){
             alert(error)
+        }
+    }
+
+    const handleMembersInChannel = (event) => {
+        const members = event.target.value;
+        console.log("Les membres: ", members)
+        if (members !== "") {
+            setMembersToAdd([...membersToAdd, members]);
         }
     }
 
@@ -238,7 +253,7 @@ const  Board = () =>  {
                         </button>
                         <div className={styles.directMessage}>
                             {users.map((user) => (
-                                <li>{user.name}</li>
+                                <li key={user?.id}>{user.name}</li>
                             ))}
                         </div>
                         <ul>
@@ -264,6 +279,7 @@ const  Board = () =>  {
 
                                     messages?.messages.length >= 1 && currentChannelId != undefined?
                                         <div className={styles.chatHistory}>
+                                            {/*TODO: display here the members in the channel*/}
                                             <h1> You are in the channel number_{currentChannelId} </h1>
                                             {messages.messages.map(message =>
                                                 <p>
@@ -275,11 +291,7 @@ const  Board = () =>  {
                                     :<p>No message to display</p>
 
                                 }
-
-
                             </div>
-
-
 
                         <div className={styles.chatInput}>
                             <input type="text" placeholder="Type a message..." onChange={saveMessage}/>
@@ -321,6 +333,7 @@ const  Board = () =>  {
                         className={styles.select}
                         id="members"
                         name="members"
+                        onChange={handleMembersInChannel}
                         {...register("members", { required: true })}
                     >
                         {users.map((user) => (
@@ -329,6 +342,16 @@ const  Board = () =>  {
                             </option>
                         ))}
                     </select>
+
+                    <div>
+                        {membersToAdd.map((value, index) => (
+                            <div key={index}>
+                                <input type="checkbox" value={value} checked={true}/>
+                                <label>{value}</label>
+                            </div>
+                        ))}
+                    </div>
+
                     <FontAwesomeIcon
                         icon={faClose}
                         style={{ width: 15, color: "white" }}
