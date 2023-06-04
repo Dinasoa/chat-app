@@ -109,6 +109,15 @@
     cursor: pointer;
 }
 
+.createChannelButton{
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: black;
+    background-color: grey;
+    cursor: pointer;
+}
+
 .channelButton{
     background-color: #490b49;
     color: #fff;

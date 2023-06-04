@@ -10,10 +10,7 @@ import {Message} from "@/model/Message";
 import {useMessageStore} from "@/stores/message-store";
 
 // TODO: only members in a channel can talk in the channel
-// TODO: display only channels where the user is in
 // TODO: add direct message too
-// TODO: not display anything in the chat container if there is no message yet
-// TODO: don't display anything till we are in a channel or a direct message to avoid any bad request if we send message and we are not in a channel or talk to a specific recipient
 const  Board = () =>  {
     const router = useRouter();
     const { user } = useAuthStore();
@@ -314,19 +311,19 @@ const  Board = () =>  {
                     </label>
                     <input
                         className={styles.input}
-                        id="name"
-                        name="name"
+                        id="channelName"
+                        name="channelName"
                         type="text"
-                        {...register("name", { required: true })}
+                        {...register("channelName", { required: true })}
                     />
-                    <label htmlFor="types" className={styles.label}>
+                    <label htmlFor="type" className={styles.label}>
                         Type
                     </label>
                     <select
                         className={styles.select}
-                        id="types"
-                        name="types"
-                        {...register("types", { required: true })}
+                        id="type"
+                        name="type"
+                        {...register("type", { required: true })}
                     >
                         <option value="public">Public</option>
                         <option value="private">Private</option>
@@ -363,7 +360,8 @@ const  Board = () =>  {
                         className={styles.close}
                         onClick={undisplayUser}
                     />
-                    <button className={styles.button} onClick={handleSubmit(createChannel)}>Create Channel</button>
+                    {/*TODO: edit channel*/}
+                    <button className={styles.createChannelButton} onClick={handleSubmit(createChannel)}>Create Channel</button>
                 </div> : null}
 
             {showAddMembers ?
