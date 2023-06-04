@@ -9,7 +9,7 @@ import {useAuthStore} from "@/stores/auth-store";
 
 export default function SignUp() {
     const router = useRouter();
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors } , watch} = useForm();
     const {setUser, user} = useAuthStore();
 
     const onSubmit = async (data) => {
@@ -53,7 +53,16 @@ export default function SignUp() {
                             {...register('name', { required: true })}
                         />
                         {errors.name && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
-
+                        <label htmlFor="bio" className={`${styles.label}`}>
+                            Bio
+                        </label>
+                        <input
+                            className={styles.input}
+                            id="bio"
+                            name="bio"
+                            type="text"
+                            {...register("bio", {required: false})}
+                        />
                         <label htmlFor="password" className={`${styles.label}`}>
                             Password
                         </label>
@@ -68,20 +77,18 @@ export default function SignUp() {
                         {errors.password?.type === 'minLength' && <p style={{color: "red"}}>Le mot de passe doit contenir au moins 8 caractères.</p>}
 
                         {/*TODO: add constraint on confirm password to be eauql with the password. */}
+
                         <label htmlFor="password" className={`${styles.label}`}>
                             Confirm Password
                         </label>
-                        {/*<input*/}
-                        {/*    className={`${styles.input}`}*/}
-                        {/*    id="confirmPassword"*/}
-                        {/*    name="confirmPassword"*/}
-                        {/*    type="confirmPassword"*/}
-                        {/*    {...register('confirmPassword', { required: true, minLength: 8 })}*/}
-                        {/*/>*/}
-                        {/*{errors.confirmPassword?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}*/}
-                        {/*{errors.confirmPassword?.type === 'minLength' && <p style={{color: "red"}}>Le mot de passe doit contenir au moins 8 caractères.</p>}*/}
+                        <input
+                            className={`${styles.input}`}
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            type="password"
+                        />
 
-                    <button className={`${styles.button}`} type="submit">
+                    <button className={styles.registerButton} type="submit">
                         S'inscrire
                     </button>
 

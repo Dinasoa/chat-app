@@ -53,3 +53,21 @@
     background-color: grey;
     cursor: pointer;
 }
+
+.registerButton{
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: black;
+    background-color: grey;
+    cursor: pointer;
+}
+
+.loginButton{
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: black;
+    background-color: grey;
+    cursor: pointer;
+}

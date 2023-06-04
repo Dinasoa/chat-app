@@ -62,9 +62,11 @@ const  Board = () =>  {
 
     useEffect(() => {
         getChannels();
-        getAllUsers();
-        console.log("Value of the show add members: " + showAddMembers)
-    }, []);
+    }, channels);
+
+    useEffect(() => {
+        getAllUsers()
+    }, users)
 
     useEffect(() => {
         if(currentChannelId != undefined || recipientId != undefined){
@@ -139,7 +141,7 @@ const  Board = () =>  {
             // TODO: SEE THE REQUEST BODY OF THE ADD MEMBERS IN A CHANNEL REQUEST
             // DATA IS AN OBJECT CONTAINING LIST OF MEMBERS WE'D LIKE TO ADD IN THE CHANNEL
             // {"members":["6"]}
-            const responses = await api.post("/channels/{channel_id}/members", data, {
+            const responses = await api.post(`/channels/${currentChannelId}/members`, data, {
                 "headers": {
                     Authorization: `Bearer ${token}`
                 }
@@ -244,19 +246,14 @@ const  Board = () =>  {
                                 onClick={displayUser}
                             />
                         </button>
-                        <button className={styles.channelButton} onClick={showAddMembersForm}>
-                            Add members
-                            <FontAwesomeIcon
-                                icon={faAdd}
-                                style={{ width: 10, color: "white" }}
-                            />
-                        </button>
                         <div className={styles.directMessage}>
+                            <h3>Users: </h3>
                             {users.map((user) => (
                                 <li key={user?.id}>{user.name}</li>
                             ))}
                         </div>
                         <ul>
+                            <h3>Channels: </h3>
                             {channels.map((channel) => (
                                 <li className={styles.li} key={channel.id} onClick={() => {getChannelById(channel.id)}}>
                                     {channel.name}_{channel.id} #
@@ -279,6 +276,14 @@ const  Board = () =>  {
 
                                     messages?.messages.length >= 1 && currentChannelId != undefined?
                                         <div className={styles.chatHistory}>
+                                            <button className={styles.channelButton} onClick={showAddMembersForm}>
+                                                Add members
+                                                <FontAwesomeIcon
+                                                    icon={faAdd}
+                                                    style={{ width: 10, color: "white" }}
+                                                />
+                                            </button>
+
                                             {/*TODO: display here the members in the channel*/}
                                             <h1> You are in the channel number_{currentChannelId} </h1>
                                             {messages.messages.map(message =>
