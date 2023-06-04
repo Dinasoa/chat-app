@@ -9,6 +9,11 @@ import { useForm } from "react-hook-form";
 import {Message} from "@/model/Message";
 import {useMessageStore} from "@/stores/message-store";
 
+// TODO: only members in a channel can talk in the channel
+// TODO: display only channels where the user is in
+// TODO: add direct message too
+// TODO: not display anything in the chat container if there is no message yet
+// TODO: don't display anything till we are in a channel or a direct message to avoid any bad request if we send message and we are not in a channel or talk to a specific recipient
 const  Board = () =>  {
     const router = useRouter();
     const { user } = useAuthStore();
@@ -16,7 +21,6 @@ const  Board = () =>  {
     const [channels, setChannels] = useState([]);
     const [showCreateChannel, setShowCreateChannel] = useState(false);
     const [showAddMembers, setShowAddMembers] = useState(false);
-    const [membersToAdd , setMembersToAdd] = useState([]);
     const token = user?.token;
     const [users, setUsers] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -46,7 +50,7 @@ const  Board = () =>  {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("RESPONSE: ", response.data);
+            console.log("All channels: ", response.data);
             setChannels(response.data.channels);
             router.push("/ChatHome");
         } catch (error) {
@@ -59,7 +63,7 @@ const  Board = () =>  {
         getChannels();
         getAllUsers();
         console.log("Value of the show add members: " + showAddMembers)
-    }, channels);
+    }, []);
 
     const displayUser = () => {
         router.push("/About");
@@ -79,18 +83,8 @@ const  Board = () =>  {
                 },
             });
             console.log("RESPONSE: ", response.data);
-        } catch (error) {
-            console.log("BEARER: ", token);
-            console.log("ERROR: ", error); try{
-            const responses = await api.get(`/messages/channel/${currentChannelId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            console.log("Channel Message: ", responses.data)
-        } catch(error){
+        }  catch(error){
             alert(error)
-        }
         }
     };
 
@@ -101,6 +95,7 @@ const  Board = () =>  {
                     Authorization: `Bearer ${token}`
                 }
             });
+            getChannelMessage()
             setCurrentChannelId(channelId);
             console.log("Channel Id and its messages: ", response.data);
         } catch (error) {
@@ -116,6 +111,7 @@ const  Board = () =>  {
                 },
             });
             console.log("All users: ", response.data);
+            console.log("Users: " , response.data.users)
             setUsers(response.data.users);
         } catch (error) {
             console.log("BEARER: ", token);
@@ -146,27 +142,33 @@ const  Board = () =>  {
         }
     }
 
+
+    const saveMessage = (event:ChangeEvent<HTMLInputElement>) => {
+        const message = {
+            "channelId": currentChannelId != null ? currentChannelId : null,
+            "recipientId": recipientId != null ? recipientId : null,
+            "content": event.target.value
+        }
+        setMessage(message);
+    }
+
     const sendMessage = async () => {
         try{
-            const responses = await api.post("/message", message, {
+            const messagesToCreate = await api.post("/message", message, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-
-            console.log("Data: ", responses.data)
+            const allMessages = await api.get(`/messages/channel/${currentChannelId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setMessages(allMessages.data)
+            console.log("Message sent: ", messagesToCreate.data)
         } catch (error) {
             alert("There is an error. ")
         }
-    }
-
-    const saveMessage = (event:ChangeEvent<HTMLInputElement>) => {
-        const message = {
-            "channelId": currentChannelId,
-            "recipientId": recipientId,
-            "content": event.target.value
-        }
-        setMessage(message);
     }
 
     const getChannelMessage = async () => {
@@ -211,7 +213,6 @@ const  Board = () =>  {
                         />
 
                     </div>
-
                 </nav>
 
                 {/*__SIDEBAR_NAVIGATION__ AND __CHAT_SECTION*/}
@@ -232,6 +233,11 @@ const  Board = () =>  {
                                 style={{ width: 10, color: "white" }}
                             />
                         </button>
+                        <div className={styles.directMessage}>
+                            {users.map((user) => (
+                                <li>{user.name}</li>
+                            ))}
+                        </div>
                         <ul>
                             {channels.map((channel) => (
                                 <li className={styles.li} key={channel.id} onClick={() => {getChannelById(channel.id)}}>
@@ -241,22 +247,28 @@ const  Board = () =>  {
                         </ul>
                     </aside>
 
-                    {/* TODO: Implement the chat logic (use FCM if possible) however use the existent request in the back-end. */}
                     <main className={styles.chat}>
-                        {/* TODO: Put the messages exchanged in this section. */}
-                        <div className={styles.chatHistory}>
-                            {console.log("Les messages: ", messages)}
-                            {messages.messages.map(message =>
-                                <p>
-                                    {message.sender.name}:
-                                    {message.content}
-                                </p>
-                            )}
-                        </div>
+
+                            <div className={styles.chatHistory}>
+
+
+                                    <div className={styles.chatHistory}>
+                                        {console.log("Les messages: ", messages)}
+                                        {messages.messages.map(message =>
+                                            <p>
+                                                {message.sender.name}:
+                                                {message.content}
+                                            </p>
+                                        )}
+                                    </div>
+
+                            </div>
+
+
+
                         <div className={styles.chatInput}>
                             <input type="text" placeholder="Type a message..." onChange={saveMessage}/>
                             <button className={styles.button} onClick={sendMessage}>Send</button>
-                            <button className={styles.button} onClick={getChannelMessage}>Channel Message</button>
                         </div>
                     </main>
                 </div>

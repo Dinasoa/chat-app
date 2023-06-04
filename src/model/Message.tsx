@@ -1,8 +1,10 @@
 export interface Message{
-    channel_id: string,
-    recipient_id: number,
+    recipientId: number | null,
+    channelId: string | null,
     content: string
 }
+
+// (messages: { recipientId: number | null; channelId: number | null; content: string }) => void;
 
 export interface Messages{
     status: boolean,

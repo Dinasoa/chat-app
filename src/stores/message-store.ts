@@ -7,8 +7,8 @@ type Store = {
 };
 
 type Action = {
-    setMessage: (messages: { recipientId: number | undefined; channelId: number | undefined; content: string }) => void;
-    setMessages: (message: Message) => void;
+    setMessage: (messages: { recipientId: number | null; channelId: number | null; content: string }) => void;
+    setMessages: (message: Messages) => void;
 };
 
 export const useMessageStore = create<Store & Action>()(set => ({
