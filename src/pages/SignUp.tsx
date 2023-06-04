@@ -67,6 +67,19 @@ export default function SignUp() {
                         {errors.password?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
                         {errors.password?.type === 'minLength' && <p style={{color: "red"}}>Le mot de passe doit contenir au moins 8 caractères.</p>}
 
+                        {/*TODO: add constraint on confirm password to be eauql with the password. */}
+                        <label htmlFor="password" className={`${styles.label}`}>
+                            Confirm Password
+                        </label>
+                        <input
+                            className={`${styles.input}`}
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            type="confirmPassword"
+                            {...register('confirmPassword', { required: true, minLength: 8 })}
+                        />
+                        {errors.confirmPassword?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
+                        {errors.confirmPassword?.type === 'minLength' && <p style={{color: "red"}}>Le mot de passe doit contenir au moins 8 caractères.</p>}
 
                     <button className={`${styles.button}`} type="submit">
                         S'inscrire
