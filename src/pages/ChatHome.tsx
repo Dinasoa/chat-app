@@ -57,13 +57,10 @@ const  Board = () =>  {
         }
     };
 
-    useEffect(() => {
+    useEffect(()=>{
+        getAllUsers();
         getChannels();
-    }, channels);
-
-    useEffect(() => {
-        getAllUsers()
-    }, users)
+    }, []);
 
     useEffect(() => {
         if(currentChannelId != undefined || recipientId != undefined){
@@ -199,6 +196,10 @@ const  Board = () =>  {
         if (members !== "") {
             setMembersToAdd([...membersToAdd, members]);
         }
+    }
+
+    const directMessage = (id) => {
+        setRecipientId(id);
     }
 
     return (
