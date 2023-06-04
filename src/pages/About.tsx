@@ -105,6 +105,7 @@ export default function About () {
                     <FontAwesomeIcon
                         icon={faUser}
                         style={{width: 25, color: "black"}}/>
+                    {/*TODO: email is not updatable*/}
                     <label htmlFor="email" className={styles.label}>
                         Email
                     </label>
@@ -122,19 +123,19 @@ export default function About () {
                         className={styles.input}
                         id="name"
                         name="name"
-                        placeholder={user?.name}
+                        value={user?.name}
                         {...register("name")}
                     />
                     <label htmlFor="bio" className={styles.label}>
                         Bio
                     </label>
-                    <input
-                        className={styles.input}
-                        id="bio"
+                    <textarea
                         name="bio"
+                        id="bio"
                         placeholder={user?.bio}
                         {...register("bio")}
-                    />
+                    >
+                    </textarea>
                     <label htmlFor="password" className={styles.label}>
                         Password
                     </label>
@@ -142,8 +143,18 @@ export default function About () {
                         className={styles.input}
                         type="password"
                         id="password"
-                        name="password"
-                        {...register("password")}
+                        name="currentPassword"
+                        {...register("currentPassword")}
+                    />
+                    <label htmlFor="password" className={styles.label}>
+                        New password
+                    </label>
+                    <input
+                        className={styles.input}
+                        type="password"
+                        id="password"
+                        name="newPassword"
+                        {...register("newPassword", {minLength: 8})}
                     />
                     <button className={styles.button} onClick={updateUserInfo}>UPDATE</button>
                 </div>
