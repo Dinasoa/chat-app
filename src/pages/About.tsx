@@ -108,7 +108,6 @@ export default function About () {
                     <FontAwesomeIcon
                         icon={faUser}
                         style={{width: 25, color: "black"}}/>
-                    {/*TODO: email is not updatable*/}
                     <label htmlFor="email" className={styles.label}>
                         Email
                     </label>

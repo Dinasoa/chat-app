@@ -10,7 +10,6 @@ import {Message} from "@/model/Message";
 import {useMessageStore} from "@/stores/message-store";
 
 // TODO: only members in a channel can talk in the channel
-// TODO: add direct message too
 const  Board = () =>  {
     const router = useRouter();
     const { user } = useAuthStore();
@@ -21,7 +20,13 @@ const  Board = () =>  {
     const [showUpdateChannel, setShowUpdateChannel] = useState(false);
     const token = user?.token;
     const [users, setUsers] = useState([]);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const [members, setMembers] = useState([]);
+    const [membersToAdd, setMembersToAdd] = useState([]);
+    const { register, handleSubmit, setValue, watch,formState: { errors } } = useForm({
+        defaultValues: {
+            members: []
+        }
+    });
     const [currentChannelId, setCurrentChannelId] = useState<number>(1);
     const [recipientId, setRecipientId] = useState<number>(1);
 
@@ -92,8 +97,10 @@ const  Board = () =>  {
 
     const createChannel = async (data) => {
         setShowCreateChannel(false);
+        data["members"] = members;
         console.log("Channel to create: ", data)
         const token = user?.token;
+
         try {
             const response = await api.post('/channel', data, {
                 headers: {
@@ -148,9 +155,11 @@ const  Board = () =>  {
     const addMembersInChannel = async (data) => {
         setShowAddMembers(false);
 
+        data["members"] = membersToAdd;
+        console.log("Members to add in the current channel: ", data);
+
         try{
             // TODO: ADD THE ENDPOINT TO ADD MEMBERS IN A CHANNEL
-            // TODO: SEE THE REQUEST BODY OF THE ADD MEMBERS IN A CHANNEL REQUEST
             // DATA IS AN OBJECT CONTAINING LIST OF MEMBERS WE'D LIKE TO ADD IN THE CHANNEL
             // {"members":["6"]}
             const responses = await api.post(`/channels/${currentChannelId}/members`, data, {
@@ -242,19 +251,21 @@ const  Board = () =>  {
                 {/*__NAVIGATION BAR__*/}
                 <nav className={styles.navbar}>
                     <div className={styles.searchBar}>
-                        <input type="text" placeholder="Rechercher..." />
+                        <input type="text" placeholder="Rechercher..."/>
                         <button>
                             <FontAwesomeIcon
                                 className={styles.icons}
                                 icon={faSearch}
-                                style={{ width: 15, color: "black" }}
+                                style={{width: 15, color: "black"}}
                             />
                         </button>
 
                         {user?.name}
 
-                        <svg style={{width:30}} onClick={displayUser} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.icons}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <svg style={{width: 30}} onClick={displayUser} xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.icons}>
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
 
 
@@ -273,20 +284,23 @@ const  Board = () =>  {
                             Create channel
                             <FontAwesomeIcon
                                 icon={faAdd}
-                                style={{ width: 10, color: "white" }}
+                                style={{width: 10, color: "white"}}
                                 onClick={displayUser}
                             />
                         </button>
                         <div className={styles.directMessage}>
                             <h3>Users: </h3>
                             {users.map((user) => (
-                                <li key={user?.id} onClick={() => directMessage(user.id)} className={styles.userDirectMessage}>{user.name}</li>
+                                <li key={user?.id} onClick={() => directMessage(user.id)}
+                                    className={styles.userDirectMessage}>{user.name}</li>
                             ))}
                         </div>
                         <ul>
                             <h3>Channels: </h3>
                             {channels.map((channel) => (
-                                <li className={styles.li} key={channel.id} onClick={() => {getChannelById(channel.id)}}>
+                                <li className={styles.li} key={channel.id} onClick={() => {
+                                    getChannelById(channel.id)
+                                }}>
                                     {channel.name}_{channel.id} #
                                 </li>
                             ))}
@@ -295,64 +309,64 @@ const  Board = () =>  {
 
                     <main className={styles.chat}>
 
-                            <div className={styles.chatHistory}>
-                                <h1>
-                                    {
-                                        currentChannelId == undefined && recipientId == undefined ? <h1>
-                                            Please select a channel or a direct message
-                                            </h1> : <h1></h1>
-                                    }
-                                </h1>
-                                {currentChannelId != undefined ?
-                                    <div>
-                                        <button className={styles.channelButton} onClick={showAddMembersForm}>
-                                            Add members
-                                            <FontAwesomeIcon
-                                                icon={faAdd}
-                                                style={{ width: 10, color: "white" }}
-                                            />
-                                        </button>
-                                        <button className={styles.channelButton} onClick={showUpdateChannelForm}>
-                                            Update current channel
-                                            <FontAwesomeIcon
-                                                icon={faAdd}
-                                                style={{ width: 10, color: "white" }}
-                                            />
-                                        </button>
-                                    </div>
-                                    : null
-                                }
-
+                        <div className={styles.chatHistory}>
+                            <h1>
                                 {
-                                    messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId != undefined?
-                                        <div className={styles.chatHistory}>
+                                    currentChannelId == undefined && recipientId == undefined ? <h1>
+                                        Please select a channel or a direct message
+                                    </h1> : <h1></h1>
+                                }
+                            </h1>
+                            {currentChannelId != undefined ?
+                                <div>
+                                    <button className={styles.channelButton} onClick={showAddMembersForm}>
+                                        Add members
+                                        <FontAwesomeIcon
+                                            icon={faAdd}
+                                            style={{width: 10, color: "white"}}
+                                        />
+                                    </button>
+                                    <button className={styles.channelButton} onClick={showUpdateChannelForm}>
+                                        Update current channel
+                                        <FontAwesomeIcon
+                                            icon={faAdd}
+                                            style={{width: 10, color: "white"}}
+                                        />
+                                    </button>
+                                </div>
+                                : null
+                            }
+
+                            {
+                                messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId != undefined ?
+                                    <div className={styles.chatHistory}>
 
 
+                                        {/*TODO: display here the members in the channel*/}
+                                        {recipientId != undefined && currentChannelId == undefined ?
+                                            <h1> Direct Message: {recipientId} </h1>
+                                            :
+                                            <div>
+                                                <h1> You are in the channel number_{currentChannelId} </h1>
+                                            </div>
+                                        }
 
-                                            {/*TODO: display here the members in the channel*/}
-                                            {recipientId != undefined && currentChannelId == undefined ?
-                                                <h1> Direct Message: {recipientId} </h1>
-                                                :
-                                                <div>
-                                                    <h1> You are in the channel number_{currentChannelId} </h1>
-                                                </div>
-                                            }
-
-                                            {
-                                                messages?.messages?.map(message =>
+                                        {
+                                            messages?.messages?.map(message =>
                                                 <p>
                                                     {message.sender.name}:
                                                     {message.content}
                                                 </p>
-                                                )
-                                            }
-                                        </div>
+                                            )
+                                        }
+                                    </div>
                                     : <p>No message to display</p>
-                                }
-                            </div>
+                            }
+                        </div>
 
                         <div className={styles.chatInput}>
-                            <textarea className={styles.textarea} type="text" name="message" placeholder="Type a message..." onChange={saveMessage}></textarea>
+                            <textarea className={styles.textarea} type="text" name="message"
+                                      placeholder="Type a message..." onChange={saveMessage}></textarea>
                             <button className={styles.sendMessageButton} onClick={sendMessage}>Send</button>
                         </div>
                     </main>
@@ -369,9 +383,9 @@ const  Board = () =>  {
                         <input
                             className={styles.input}
                             id="channelName"
-                            name="channelName"
+                            name="name"
                             type="text"
-                            {...register("channelName", { required: true })}
+                            {...register("name", {required: true})}
                         />
                         <label htmlFor="type" className={styles.label}>
                             Type
@@ -380,7 +394,7 @@ const  Board = () =>  {
                             className={styles.select}
                             id="type"
                             name="type"
-                            {...register("type", { required: true })}
+                            {...register("type", {required: true})}
                         >
                             <option value="public">Public</option>
                             <option value="private">Private</option>
@@ -392,29 +406,49 @@ const  Board = () =>  {
                             className={styles.select}
                             id="members"
                             name="members"
-                            {...register("members", { required: true })}
+                            onChange={({target}) => {
+                                const value = target.value;
+                                const newValue = new Set([parseInt(value), ...members]);
+                                console.log("members: ", newValue)
+                                setMembers(() => Array.from(newValue.values()))
+                            }}
                         >
+
                             {users.map((user) => (
                                 <option key={user.id} value={user.id}>
                                     {user.name}
                                 </option>
                             ))}
                         </select>
-
+                        <div>
+                            {
+                               users.filter((user) => {
+                                   return members.includes(user.id)
+                               }).map(user => {
+                                   return(
+                                           <li key={user.id}>
+                                               {user.name}
+                                           </li>
+                                   )
+                               })
+                            }
+                        </div>
 
                         <FontAwesomeIcon
                             icon={faClose}
-                            style={{ width: 15, color: "white" }}
+                            style={{width: 15, color: "white"}}
                             className={styles.close}
                             onClick={undisplayUser}
                         />
                         {/*TODO: edit channel*/}
-                        <button className={styles.createChannelButton} onClick={handleSubmit(createChannel)}>Create Channel</button>
+                        <button className={styles.createChannelButton} onClick={handleSubmit(createChannel)}>Create
+                            Channel
+                        </button>
                     </div>
                 </form>
                 : null}
 
-            {showUpdateChannel?
+            {showUpdateChannel ?
                 <form className="editChannelForm">
                     <div className={styles.createChannel}>
 
@@ -425,13 +459,14 @@ const  Board = () =>  {
                             className={styles.select}
                             id="types"
                             name="types"
-                            {...register("types", { required: true })}
+                            {...register("types", {required: true})}
                         >
                             <option value="public">Public</option>
                             <option value="private">Private</option>
                         </select>
                         <button onClick={() => setShowUpdateChannel(false)}>Close</button>
-                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Update Channel</button>
+                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Update Channel
+                        </button>
                     </div>
                 </form> : null}
 
@@ -445,21 +480,41 @@ const  Board = () =>  {
                             className={styles.select}
                             id="members"
                             name="members"
-                            {...register("members", { required: true })}
+                            onChange={({target}) => {
+                                const value = target.value;
+                                const newValue = new Set([parseInt(value), ...members]);
+                                console.log("members: ", newValue)
+                                setMembersToAdd(() => Array.from(newValue.values()))
+                            }}
                         >
+
                             {users.map((user) => (
                                 <option key={user.id} value={user.id}>
                                     {user.name}
                                 </option>
                             ))}
                         </select>
+                        <div>
+                            {
+                                users.filter((user) => {
+                                    return members.includes(user.id)
+                                }).map(user => {
+                                    return(
+                                        <li key={user.id}>
+                                            {user.name}
+                                        </li>
+                                    )
+                                })
+                            }
+                        </div>
                         <FontAwesomeIcon
                             icon={faClose}
-                            style={{ width: 15, color: "white" }}
+                            style={{width: 15, color: "white"}}
                             className={styles.close}
                             onClick={undispalyUserModal}
                         />
-                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Add member(s)</button>
+                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Add member(s)
+                        </button>
                     </div>
                 </form> : null}
 
