@@ -103,7 +103,7 @@ export default function About () {
                 </aside>
             </div>
 
-            <form onSubmit={handleSubmit(updateUserInfo)} className="editProfileForm">
+            <form onSubmit={handleSubmit(updateUserInfo)} className="editProfileForm" name="editProfileForm">
                 <div className={styles.createChannel}>
                     <FontAwesomeIcon
                         icon={faUser}
@@ -158,7 +158,7 @@ export default function About () {
                         name="newPassword"
                         {...register("newPassword", {minLength: 8})}
                     />
-                    <button className={styles.button} onClick={updateUserInfo}>UPDATE</button>
+                    <button className={styles.button + " updateProfileButton"} onClick={updateUserInfo}>UPDATE</button>
                 </div>
             </form>
 
