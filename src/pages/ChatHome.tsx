@@ -84,10 +84,6 @@ const  Board = () =>  {
     }, [])
 
     const displayUser = () => {
-    //     if(currentChannelId != undefined || recipientId != undefined){
-    //         getChannelMessage(currentChannelId);
-    //     }
-    // }, [messages])
         router.push("/About");
     };
 

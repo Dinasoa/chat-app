@@ -17,7 +17,7 @@ export default function SignIn() {
             localStorage.setItem('userInfo', JSON.stringify(data));
             setUser(response.data.user)
             console.log("This is the user: ", user)
-            await router.push("/ChatHome");
+            await router.push("/About");
         } catch (error) {
             console.log("ERROR: ", error);
         }
