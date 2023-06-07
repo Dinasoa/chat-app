@@ -25,9 +25,9 @@ export default function SignIn() {
 
     return (
         <>
-            <div className={`${styles.card}`}>
-                <form className={styles.loginForm} onSubmit={handleSubmit(onSubmit)}>
-                        <label htmlFor="email" className={`${styles.label}`}>
+            <div className={styles.card}>
+                <form className={styles.loginForm + " createChannelForm"} onSubmit={handleSubmit(onSubmit)}>
+                        <label htmlFor="email" className={styles.label}>
                             Email
                         </label>
                         <input
@@ -51,7 +51,7 @@ export default function SignIn() {
                         />
                         {errors.password?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
 
-                    <button className={styles.loginButton} type="submit">
+                    <button className={styles.loginButton + " loginButton"} type="submit">
                         Se connecter
                     </button>
 
