@@ -444,23 +444,23 @@ const  Board = () =>  {
                 : null}
 
             {showUpdateChannel ?
-                <form className="editChannelForm">
+                <form className="editChannelForm" name="editChannelForm">
                     <div className={styles.createChannel}>
 
-                        <label htmlFor="types" className={styles.label}>
+                        <label htmlFor="type" className={styles.label}>
                             Type
                         </label>
                         <select
                             className={styles.select}
-                            id="types"
-                            name="types"
-                            {...register("types", {required: true})}
+                            id="type"
+                            name="type"
+                            {...register("type", {required: true})}
                         >
                             <option value="public">Public</option>
                             <option value="private">Private</option>
                         </select>
                         <button onClick={() => setShowUpdateChannel(false)}>Close</button>
-                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Update Channel
+                        <button className={styles.button + " updateChannelButton"} onClick={handleSubmit(addMembersInChannel)}>Update Channel
                         </button>
                     </div>
                 </form> : null}
