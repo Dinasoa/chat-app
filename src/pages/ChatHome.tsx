@@ -235,7 +235,7 @@ const  Board = () =>  {
                 }
             })
             setMessages(responses.data.messages);
-            console.log("Direct message: ", responses.data)
+            console.log("messages: ", responses.data)
         } catch (error) {
             alert(error)
         }
@@ -305,7 +305,7 @@ const  Board = () =>  {
 
                     <main className={styles.chat}>
 
-                        <div className={styles.chatHistory}>
+                        <div >
                             <h1>
                                 {
                                     currentChannelId == undefined && recipientId == undefined ? <h1>
@@ -336,7 +336,6 @@ const  Board = () =>  {
                             {
                                 messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId != undefined ?
                                     <div className={styles.chatHistory}>
-
 
                                         {/*TODO: display here the members in the channel*/}
                                         {recipientId != undefined && currentChannelId == undefined ?
