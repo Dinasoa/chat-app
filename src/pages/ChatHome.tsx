@@ -266,7 +266,7 @@ const  Board = () =>  {
 
 
                         <button
-                            className={styles.logoutButton}
+                            className={styles.logoutButton + " logoutButton"}
                             onClick={deconnect}>Logout
                         </button>
 
@@ -362,7 +362,7 @@ const  Board = () =>  {
                         <div className={styles.chatInput}>
                             <textarea className={styles.textarea} type="text" name="message"
                                       placeholder="Type a message..." onChange={saveMessage}></textarea>
-                            <button className={styles.sendMessageButton} onClick={sendMessage}>Send</button>
+                            <button className={styles.sendMessageButton + " sendMessageButton"} onClick={sendMessage}>Send</button>
                         </div>
                     </main>
                 </div>
