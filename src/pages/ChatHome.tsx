@@ -370,7 +370,7 @@ const  Board = () =>  {
 
 
             {showCreateChannel ?
-                <form className="createChannelForm">
+                <form className="createChannelForm" name="createChannelForm">
                     <div className={styles.createChannel}>
                         <label htmlFor="name" className={styles.label}>
                             Name
@@ -436,7 +436,7 @@ const  Board = () =>  {
                             onClick={undisplayUser}
                         />
                         {/*TODO: edit channel*/}
-                        <button className={styles.createChannelButton} onClick={handleSubmit(createChannel)}>Create
+                        <button className={styles.createChannelButton + " createChannelButton"} onClick={handleSubmit(createChannel)}>Create
                             Channel
                         </button>
                     </div>
