@@ -69,17 +69,14 @@ const  Board = () =>  {
     useEffect(()=>{
         getAllUsers();
         getChannels();
-    }, []);
+    }, [messages]);
 
     useEffect(() => {
-        if(currentChannelId != undefined && recipientId == undefined){
+        if(recipientId != undefined){
+            directMessage(recipientId)
+        }
+        if(currentChannelId != null || currentChannelId != undefined){
             getChannelMessage(currentChannelId);
-        }
-        if(currentChannelId == undefined && recipientId != undefined){
-            directMessage(recipientId);
-        }
-        if(currentChannelId == undefined && recipientId == undefined){
-            console.log("No message to display. ")
         }
     }, [])
 
@@ -229,9 +226,7 @@ const  Board = () =>  {
 
     const directMessage = async (id) => {
         console.log("The current recipient id is: ", recipientId);
-        console.log("The current channel id is: ", currentChannelId)
-        setRecipientId(1)
-        setCurrentChannelId(null)
+        console.log("The current channel id is: ", currentChannelId);
         try{
             setRecipientId(id);
             const responses = await api.get(`/messages/${recipientId}`,{
@@ -239,7 +234,7 @@ const  Board = () =>  {
                     Authorization: `Bearer ${token}`
                 }
             })
-            setMessages(responses.data.messages);
+            setMessages(responses.data);
             console.log("messages: ", responses.data)
         } catch (error) {
             alert(error)
@@ -293,7 +288,8 @@ const  Board = () =>  {
                             <h3>Users: </h3>
                             {users.map((user) => (
                                 <li key={user?.id} onClick={() => directMessage(user.id)}
-                                    className={styles.userDirectMessage}>{user.name}</li>
+                                    className={styles.userDirectMessage}>{user.name}
+                                </li>
                             ))}
                         </div>
                         <ul>
