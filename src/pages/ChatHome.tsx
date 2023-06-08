@@ -227,6 +227,7 @@ const  Board = () =>  {
     const directMessage = async (id) => {
         console.log("The current recipient id is: ", recipientId);
         console.log("The current channel id is: ", currentChannelId);
+        setCurrentChannelId(null);
         try{
             setRecipientId(id);
             const responses = await api.get(`/messages/${recipientId}`,{
@@ -288,7 +289,7 @@ const  Board = () =>  {
                             <h3>Users: </h3>
                             {users.map((user) => (
                                 <li key={user?.id} onClick={() => directMessage(user.id)}
-                                    className={styles.userDirectMessage}>{user.name}
+                                    className={styles.userDirectMessage + " userDirectMessage"}>{user.name}
                                 </li>
                             ))}
                         </div>
@@ -338,7 +339,6 @@ const  Board = () =>  {
                                 messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId != undefined ?
                                     <div className={styles.chatHistory}>
 
-                                        {/*TODO: display here the members in the channel*/}
                                         {recipientId != undefined && currentChannelId == undefined ?
                                             <h1> Direct Message: {recipientId} </h1>
                                             :

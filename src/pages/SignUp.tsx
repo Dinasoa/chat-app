@@ -6,11 +6,14 @@ import { BASE_URL } from '@/providers/base';
 import Link from "next/link";
 import {api} from "@/providers/api";
 import {useAuthStore} from "@/stores/auth-store";
+import {useRef} from "react";
 
 export default function SignUp() {
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } , watch} = useForm();
     const {setUser, user} = useAuthStore();
+    const password = useRef({});
+    password.current = watch('password', '');
 
     const onSubmit = async (data) => {
         try {
@@ -86,7 +89,11 @@ export default function SignUp() {
                             id="confirmPassword"
                             name="confirmPassword"
                             type="password"
+                            {...register('confirmPassword', {
+                                validate: (value) => value === password.current || 'Le mot de passe ne correspond pas. ',
+                            })}
                         />
+                        {errors.confirmPassword && <p style={{color: "red"}}>{errors.confirmPassword.message}</p>}
 
                     <button className={styles.registerButton + " registerButton"} type="submit">
                         S'inscrire
