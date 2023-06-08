@@ -27,7 +27,7 @@ const  Board = () =>  {
             members: []
         }
     });
-    const [currentChannelId, setCurrentChannelId] = useState<number>(1);
+    const [currentChannelId, setCurrentChannelId] = useState<number>();
     const [recipientId, setRecipientId] = useState<number>(1);
 
     const deconnect = () => {
@@ -82,6 +82,8 @@ const  Board = () =>  {
             console.log("No message to display. ")
         }
     }, [])
+
+
 
     const displayUser = () => {
         router.push("/About");
@@ -187,6 +189,7 @@ const  Board = () =>  {
                 }
             });
             if(currentChannelId != null){
+                // TODO: trop de duplicatoin, appeler la methode déjà créée
                 const allMessages = await api.get(`/messages/channel/${currentChannelId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -194,13 +197,16 @@ const  Board = () =>  {
                 })
                 setMessages(allMessages.data)
             }
-            const allMessages = await api.get(`/messages/${recipientId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            // TODO: de meme pour celle-la
+            if(recipientId != null){
+                const allMessages = await api.get(`/messages/${recipientId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 setMessages(allMessages.data)
-            console.log("Message sent: ", messagesToCreate.data)
+                console.log("Message sent: ", messagesToCreate.data)
+            }
         } catch (error) {
             alert("There is an error. ")
         }
@@ -227,7 +233,6 @@ const  Board = () =>  {
         setRecipientId(1)
         setCurrentChannelId(null)
         try{
-            // TODO: even tho we click on the user to make a direct message, it only set the recipient id after two click
             setRecipientId(id);
             const responses = await api.get(`/messages/${recipientId}`,{
                 headers: {
@@ -293,7 +298,7 @@ const  Board = () =>  {
                         </div>
                         <ul>
                             <h3>Channels: </h3>
-                            {channels.map((channel) => (
+                            {channels?.map((channel) => (
                                 <li className={styles.li} key={channel.id} onClick={() => {
                                     getChannelById(channel.id)
                                 }}>

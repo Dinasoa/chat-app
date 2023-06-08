@@ -34,7 +34,7 @@ export default function About () {
             });
 
             console.log("User informations: ", response.data)
-            console.log("Biography: ", user?.bio)
+            console.log("The user: ", user)
 
         } catch (error) {
             console.log("ERROR: ", error)
