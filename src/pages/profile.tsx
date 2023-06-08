@@ -10,19 +10,15 @@ import {useForm} from "react-hook-form";
 // SWR: OPTIMISE LES TACHES ASYNCHRONES.
 // Execute les taches asynchrones.
 
-export default function About () {
+export default function Profile () {
     const {push} = useRouter();
     const {user, setUser} = useAuthStore();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const token = user?.token
 
-    const redirection = () => {
-        push("/ChatHome")
-    }
-
     const deconnect = () => {
         localStorage.removeItem("userInfo");
-        push("/SignIn");
+        push("/login");
     };
 
     const getUserInfo = async () => {

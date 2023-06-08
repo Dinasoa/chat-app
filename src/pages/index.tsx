@@ -1,13 +1,13 @@
 
 import { Inter } from 'next/font/google'
 
-import SignIn from "@/pages/SignIn";
+import Login from "@/pages/login";
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
     <>
-      <SignIn/>
+      <Login/>
     </>
   )
 }

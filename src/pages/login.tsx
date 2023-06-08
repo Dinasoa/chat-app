@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {useAuthStore} from "@/stores/auth-store";
 import {api} from "@/providers/api";
 
-export default function SignIn() {
+export default function Login() {
     const router : NextRouter = useRouter();
     const {setUser, user} = useAuthStore();
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -17,7 +17,7 @@ export default function SignIn() {
             localStorage.setItem('userInfo', JSON.stringify(data));
             setUser(response.data.user)
             console.log("This is the user: ", user)
-            await router.push("/About");
+            await router.push("/profile");
         } catch (error) {
             console.log("ERROR: ", error);
         }
@@ -56,7 +56,7 @@ export default function SignIn() {
                     </button>
 
                     <p>Pas de compte, cliquez ici: </p>
-                    <Link href="/SignUp">
+                    <Link href="/sign-up">
                         S'inscrire
                     </Link>
 

@@ -27,12 +27,12 @@ const  Board = () =>  {
             members: []
         }
     });
-    const [currentChannelId, setCurrentChannelId] = useState<number>();
-    const [recipientId, setRecipientId] = useState<number>(1);
+    const [currentChannelId, setCurrentChannelId] = useState<>();
+    const [recipientId, setRecipientId] = useState<>(1);
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
-        router.push("/SignIn");
+        router.push("/login");
     };
 
     const handleClick = () => {
@@ -69,7 +69,7 @@ const  Board = () =>  {
     useEffect(()=>{
         getAllUsers();
         getChannels();
-    }, [messages]);
+    }, []);
 
     useEffect(() => {
         if(recipientId != undefined){
@@ -78,12 +78,10 @@ const  Board = () =>  {
         if(currentChannelId != null || currentChannelId != undefined){
             getChannelMessage(currentChannelId);
         }
-    }, [])
-
-
+    }, [recipientId])
 
     const displayUser = () => {
-        router.push("/About");
+        router.push("/profile");
     };
 
     const undisplayUser = () => {
@@ -110,10 +108,6 @@ const  Board = () =>  {
 
     const getChannelById = async (channelId) => {
         try {
-            if(channelId == undefined){
-                setCurrentChannelId(1)
-            }
-
             const response = await api.get(`/channels/?channel_id=${channelId}`, {
                 headers:{
                     Authorization: `Bearer ${token}`
@@ -186,7 +180,6 @@ const  Board = () =>  {
                 }
             });
             if(currentChannelId != null){
-                // TODO: trop de duplicatoin, appeler la methode déjà créée
                 const allMessages = await api.get(`/messages/channel/${currentChannelId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -217,7 +210,6 @@ const  Board = () =>  {
                 }
             })
             setMessages(responses.data);
-            console.log(messages)
             console.log("Channel Message: ", responses.data)
         } catch(error){
             alert(error)
@@ -228,8 +220,8 @@ const  Board = () =>  {
         console.log("The current recipient id is: ", recipientId);
         console.log("The current channel id is: ", currentChannelId);
         setCurrentChannelId(null);
+        setRecipientId(id);
         try{
-            setRecipientId(id);
             const responses = await api.get(`/messages/${recipientId}`,{
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -288,7 +280,7 @@ const  Board = () =>  {
                         <div className={styles.directMessage}>
                             <h3>Users: </h3>
                             {users.map((user) => (
-                                <li key={user?.id} onClick={() => directMessage(user.id)}
+                                <li key={user?.id} onClick={() => directMessage(user?.id)}
                                     className={styles.userDirectMessage + " userDirectMessage"}>{user.name}
                                 </li>
                             ))}

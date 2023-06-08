@@ -22,7 +22,7 @@ export default function SignUp() {
             localStorage.setItem('userInfo', JSON.stringify(data));
             setUser(response.data.user)
             console.log("This is the user: ", user)
-            router.push("/ChatHome");
+            router.push("/profile");
         } catch (error) {
             alert("Verify your data: " + error)
             console.log("ERROR: ", error);
@@ -100,7 +100,7 @@ export default function SignUp() {
                     </button>
 
                     <p>Vous avez déjà un compte? Cliquez ici: </p>
-                    <Link href="/SignIn">
+                    <Link href="/login">
                         Se connecter
                     </Link>
                 </form>
