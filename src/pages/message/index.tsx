@@ -8,6 +8,7 @@ import {faUser, faAdd, faClose, faLongArrowRight, faSearch} from "@fortawesome/f
 import { useForm } from "react-hook-form";
 import {Message} from "@/model/Message";
 import {useMessageStore} from "@/stores/message-store";
+import Link from "next/link";
 
 // TODO: only members in a channel can talk in the channel
 
@@ -40,10 +41,6 @@ const  Board = () =>  {
     const createChannelForm = () => {
         router.push("/channel/create")
     }
-    const handleClick = () => {
-        setShowCreateChannel(true);
-        console.log(showCreateChannel);
-    };
 
     const showAddMembersForm = () => {
         setShowAddMembers(true);
@@ -138,9 +135,7 @@ const  Board = () =>  {
         console.log("Members to add in the current channel: ", data);
 
         try{
-            // TODO: ADD THE ENDPOINT TO ADD MEMBERS IN A CHANNEL
-            // DATA IS AN OBJECT CONTAINING LIST OF MEMBERS WE'D LIKE TO ADD IN THE CHANNEL
-            // {"members":["6"]}
+            // TODO: edit channel type
             const responses = await api.post(`/channels/${currentChannelId}/members`, data, {
                 "headers": {
                     Authorization: `Bearer ${token}`
@@ -169,7 +164,7 @@ const  Board = () =>  {
                     Authorization: `Bearer ${token}`
                 }
             });
-            if(currentChannelId != null){
+            if(currentChannelId != null ){
                 const allMessages = await api.get(`/messages/channel/${currentChannelId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -299,13 +294,9 @@ const  Board = () =>  {
                             </h1>
                             {currentChannelId != undefined ?
                                 <div>
-                                    <button className={styles.channelButton} onClick={showAddMembersForm}>
-                                        Add members
-                                        <FontAwesomeIcon
-                                            icon={faAdd}
-                                            style={{width: 10, color: "white"}}
-                                        />
-                                    </button>
+                                    <Link href={`/channel/edit/${currentChannelId}`} >
+                                        <button className={styles.channelButton}> Edit current channel</button>
+                                    </Link>
                                     <button className={styles.channelButton} onClick={showUpdateChannelForm}>
                                         Update current channel
                                         <FontAwesomeIcon
@@ -369,54 +360,6 @@ const  Board = () =>  {
                         </select>
                         <button onClick={() => setShowUpdateChannel(false)}>Close</button>
                         <button className={styles.button + " updateChannelButton"} onClick={handleSubmit(addMembersInChannel)}>Update Channel
-                        </button>
-                    </div>
-                </form> : null}
-
-            {showAddMembers ?
-                <form>
-                    <div className={styles.createChannel}>
-                        <label htmlFor="members" className={styles.label}>
-                            Member
-                        </label>
-                        <select
-                            className={styles.select}
-                            id="members"
-                            name="members"
-                            onChange={({target}) => {
-                                const value = target.value;
-                                const newValue = new Set([parseInt(value), ...members]);
-                                console.log("members: ", newValue)
-                                setMembersToAdd(() => Array.from(newValue.values()))
-                            }}
-                        >
-
-                            {users.map((user) => (
-                                <option key={user.id} value={user.id}>
-                                    {user.name}
-                                </option>
-                            ))}
-                        </select>
-                        <div>
-                            {
-                                users.filter((user) => {
-                                    return members.includes(user.id)
-                                }).map(user => {
-                                    return(
-                                        <li key={user.id}>
-                                            {user.name}
-                                        </li>
-                                    )
-                                })
-                            }
-                        </div>
-                        <FontAwesomeIcon
-                            icon={faClose}
-                            style={{width: 15, color: "white"}}
-                            className={styles.close}
-                            onClick={undispalyUserModal}
-                        />
-                        <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Add member(s)
                         </button>
                     </div>
                 </form> : null}
