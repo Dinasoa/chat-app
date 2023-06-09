@@ -151,10 +151,13 @@ const DirectMessage = () => {
 
                                         {
                                             messages?.messages?.map(message =>
-                                                <p>
-                                                    {message.sender.name}:
-                                                    {message.content}
-                                                </p>
+                                                <>
+                                                    <li style={{fontWeight: "bold"}}>Envoyé le: {new Date(message.createdAt).toLocaleTimeString()}</li>
+                                                    <p>
+                                                        {message.sender.name}:
+                                                        {message.content}
+                                                    </p>
+                                                </>
                                             )
                                         }
                                     </div>

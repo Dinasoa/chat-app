@@ -137,7 +137,7 @@ const ChannelEdit = () => {
 
                     {successMessage != "" ? successMessage : ""}
 
-                    <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Add member(s)</button>
+                    <button className={styles.button + " editChannelButton"} onClick={handleSubmit(addMembersInChannel)}>Edit Channel</button>
                 </div>
             </form>
         </>

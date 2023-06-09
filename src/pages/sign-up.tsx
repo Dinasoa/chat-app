@@ -1,8 +1,6 @@
 import styles from '@/styles/Form.module.css';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
-import { BASE_URL } from '@/providers/base';
 import Link from "next/link";
 import {api} from "@/providers/api";
 import {useAuthStore} from "@/stores/auth-store";
@@ -81,7 +79,7 @@ export default function SignUp() {
 
                         {/*TODO: add constraint on confirm password to be eauql with the password. */}
 
-                        <label htmlFor="password" className={`${styles.label}`}>
+                        <label htmlFor="confirmPassword" className={styles.label}>
                             Confirm Password
                         </label>
                         <input

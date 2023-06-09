@@ -119,7 +119,7 @@ export const Channel = () => {
                     <input
                         className={styles.input}
                         id="channelName"
-                        name="name"
+                        name="channelName name"
                         type="text"
                         {...register("name", {required: true})}
                     />
@@ -138,7 +138,6 @@ export const Channel = () => {
                     <label htmlFor="members" className={styles.label}>
                         Member
                     </label>
-                    {/* TODO: use checkbox for the member to add. */}
                     {users.map(user => (
                         <div key={user.id}>
                             <input
@@ -166,7 +165,6 @@ export const Channel = () => {
                         }
                     </div>
 
-                    {/*TODO: edit channel*/}
                     <button className={styles.createChannelButton + " createChannelButton"} onClick={handleSubmit(createChannel)}>Create
                         Channel
                     </button>
