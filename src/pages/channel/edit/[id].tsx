@@ -33,6 +33,7 @@ const ChannelEdit = () => {
             })
             console.log(responses);
             setSuccessMessage("Votre mis à jour a été bien pris en compte. ")
+            router.push(`/channel/${id}`)
         } catch (error) {
             alert(error)
         }

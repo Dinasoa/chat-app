@@ -15,9 +15,6 @@ export default function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [handleError, setHandleError] = useState<>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const handleToggle = () => {
-        setShowPassword(!showPassword)
-    }
 
     useEffect(() => {
         const existingInfo = localStorage.getItem('userInfo');
