@@ -64,7 +64,7 @@
 }
 
 .chatHistory {
-    height: 400px;
+    height: 480px;
     overflow-y: scroll;
     padding-bottom: 10px;
 }

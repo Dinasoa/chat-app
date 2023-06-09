@@ -161,7 +161,7 @@ const DirectMessage = () => {
                                             )
                                         }
                                     </div>
-                                    : <p>No message to display</p>
+                                    : <p className={styles.chatHistory}>No message to display</p>
                             }
                         </div>
 

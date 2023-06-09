@@ -53,8 +53,6 @@ export const Channel = () => {
                 },
             });
             console.log("Channel to create: ", response.data);
-            // TODO: redirect to the channel that has been created.
-
             router.push(`/channel/${response.data.channel.id}`)
         }  catch(error){
             alert(error)
