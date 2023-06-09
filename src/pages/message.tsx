@@ -10,6 +10,8 @@ import {Message} from "@/model/Message";
 import {useMessageStore} from "@/stores/message-store";
 
 // TODO: only members in a channel can talk in the channel
+
+
 const  Board = () =>  {
     const router = useRouter();
     const { user } = useAuthStore();
@@ -28,13 +30,16 @@ const  Board = () =>  {
         }
     });
     const [currentChannelId, setCurrentChannelId] = useState<>();
-    const [recipientId, setRecipientId] = useState<>(1);
+    const [recipientId, setRecipientId] = useState<>();
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
         router.push("/login");
     };
 
+    const createChannelForm = () => {
+        router.push("/channel/create")
+    }
     const handleClick = () => {
         setShowCreateChannel(true);
         console.log(showCreateChannel);
@@ -59,7 +64,7 @@ const  Board = () =>  {
             });
             console.log("All channels: ", response.data);
             setChannels(response.data.channels);
-            router.push("/ChatHome");
+            router.push("/message");
         } catch (error) {
             console.log("BEARER: ", token);
             console.log("ERROR: ", error);
@@ -69,13 +74,18 @@ const  Board = () =>  {
     useEffect(()=>{
         getAllUsers();
         getChannels();
+       if(localStorage.getItem("user") == null ) {
+           router.push("/login")
+       }
     }, []);
 
     useEffect(() => {
-        if(recipientId != undefined){
+        if(recipientId != undefined || recipientId != null){
+            setCurrentChannelId(null)
             directMessage(recipientId)
         }
         if(currentChannelId != null || currentChannelId != undefined){
+            setRecipientId(null)
             getChannelMessage(currentChannelId);
         }
     }, [recipientId])
@@ -86,24 +96,6 @@ const  Board = () =>  {
 
     const undisplayUser = () => {
         setShowCreateChannel(false);
-    };
-
-    const createChannel = async (data) => {
-        setShowCreateChannel(false);
-        data["members"] = members;
-        console.log("Channel to create: ", data)
-        const token = user?.token;
-
-        try {
-            const response = await api.post('/channel', data, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            console.log("Channel to create: ", response.data);
-        }  catch(error){
-            alert(error)
-        }
     };
 
     const getChannelById = async (channelId) => {
@@ -185,6 +177,7 @@ const  Board = () =>  {
                         Authorization: `Bearer ${token}`
                     }
                 })
+                console.log("CurrentChannelId: " ,currentChannelId)
                 setMessages(allMessages.data)
             }
             // TODO: de meme pour celle-la
@@ -222,7 +215,7 @@ const  Board = () =>  {
         setCurrentChannelId(null);
         setRecipientId(id);
         try{
-            const responses = await api.get(`/messages/${recipientId}`,{
+            const responses = await api.get(`/messages/${id}`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -262,14 +255,13 @@ const  Board = () =>  {
                             className={styles.logoutButton + " logoutButton"}
                             onClick={deconnect}>Logout
                         </button>
-
                     </div>
                 </nav>
 
                 {/*__SIDEBAR_NAVIGATION__ AND __CHAT_SECTION*/}
                 <div className={styles.container}>
                     <aside className={styles.sidebar}>
-                        <button className={styles.channelButton} onClick={handleClick}>
+                        <button className={styles.channelButton} onClick={createChannelForm}>
                             Create channel
                             <FontAwesomeIcon
                                 icon={faAdd}
@@ -360,81 +352,6 @@ const  Board = () =>  {
                     </main>
                 </div>
             </div>
-
-
-            {showCreateChannel ?
-                <form className="createChannelForm" name="createChannelForm">
-                    <div className={styles.createChannel}>
-                        <label htmlFor="name" className={styles.label}>
-                            Name
-                        </label>
-                        <input
-                            className={styles.input}
-                            id="channelName"
-                            name="name"
-                            type="text"
-                            {...register("name", {required: true})}
-                        />
-                        <label htmlFor="type" className={styles.label}>
-                            Type
-                        </label>
-                        <select
-                            className={styles.select}
-                            id="type"
-                            name="type"
-                            {...register("type", {required: true})}
-                        >
-                            <option value="public">Public</option>
-                            <option value="private">Private</option>
-                        </select>
-                        <label htmlFor="members" className={styles.label}>
-                            Member
-                        </label>
-                        <select
-                            className={styles.select}
-                            id="members"
-                            name="members"
-                            onChange={({target}) => {
-                                const value = target.value;
-                                const newValue = new Set([parseInt(value), ...members]);
-                                console.log("members: ", newValue)
-                                setMembers(() => Array.from(newValue.values()))
-                            }}
-                        >
-
-                            {users.map((user) => (
-                                <option key={user.id} value={user.id}>
-                                    {user.name}
-                                </option>
-                            ))}
-                        </select>
-                        <div>
-                            {
-                               users.filter((user) => {
-                                   return members.includes(user.id)
-                               }).map(user => {
-                                   return(
-                                           <li key={user.id}>
-                                               {user.name}
-                                           </li>
-                                   )
-                               })
-                            }
-                        </div>
-
-                        <FontAwesomeIcon
-                            icon={faClose}
-                            style={{width: 15, color: "white"}}
-                            className={styles.close}
-                            onClick={undisplayUser}
-                        />
-                        {/*TODO: edit channel*/}
-                        <button className={styles.createChannelButton + " createChannelButton"} onClick={handleSubmit(createChannel)}>Create
-                            Channel
-                        </button>
-                    </div>
-                </form>
-                : null}
 
             {showUpdateChannel ?
                 <form className="editChannelForm" name="editChannelForm">

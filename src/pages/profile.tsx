@@ -6,6 +6,7 @@ import {api} from "@/providers/api";
 import {useAuthStore} from "@/stores/auth-store";
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
+import {localStorageCheck} from "@/pages/message";
 
 // SWR: OPTIMISE LES TACHES ASYNCHRONES.
 // Execute les taches asynchrones.
@@ -83,7 +84,7 @@ export default function Profile () {
                         icon={faLongArrowLeft}
                         className={styles.icons}
                         style={{ width: 15, color: "black" }}
-                        onClick={() => {push("/ChatHome")}}
+                        onClick={() => {push("/message")}}
                     />
                     <button
                         className={styles.logoutButton}

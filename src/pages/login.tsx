@@ -4,13 +4,15 @@ import {NextRouter, useRouter} from "next/router";
 import {useForm} from "react-hook-form";
 import {useAuthStore} from "@/stores/auth-store";
 import {api} from "@/providers/api";
+import {useState} from "react";
 
 export default function Login() {
     const router : NextRouter = useRouter();
     const {setUser, user} = useAuthStore();
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [handleError, setHandleError] = useState<>("");
 
-    const onSubmit = async (data) => {
+     const onSubmit = async (data) => {
         try {
             const response = await api.post('/users/login', data);
             console.log("RESPONSE: ", response.data);
@@ -19,7 +21,8 @@ export default function Login() {
             console.log("This is the user: ", user)
             await router.push("/profile");
         } catch (error) {
-            console.log("ERROR: ", error);
+            setHandleError(error.response.data.message);
+            console.log("ERROR: ", error.response.data.message);
         }
     };
 
@@ -50,7 +53,7 @@ export default function Login() {
                             {...register('password', { required: true, minLength: 8 })}
                         />
                         {errors.password?.type === 'required' && <p style={{color: "red"}}>Ce champ est obligatoire.</p>}
-
+                        {handleError != "" ? <p style={{color: "red"}}>{handleError}</p> : ""}
                     <button className={styles.loginButton + " loginButton"} type="submit">
                         Se connecter
                     </button>
