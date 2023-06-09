@@ -74,9 +74,6 @@ const  Board = () =>  {
     useEffect(()=>{
         getAllUsers();
         getChannels();
-       if(localStorage.getItem("user") == null ) {
-           router.push("/login")
-       }
     }, []);
 
     useEffect(() => {
@@ -100,6 +97,7 @@ const  Board = () =>  {
 
     const getChannelById = async (channelId) => {
         try {
+            console.log("THe channel id: ", channelId)
             const response = await api.get(`/channels/?channel_id=${channelId}`, {
                 headers:{
                     Authorization: `Bearer ${token}`

@@ -4,21 +4,20 @@ import {useAuthStore} from "@/stores/auth-store";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faMessage, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {useRouter} from "next/router";
-import {localStorageCheck} from "@/pages/message";
 
 export const Channel = () => {
     const router = useRouter();
     const { user } = useAuthStore();
     const [users, setUsers] = useState([]);
-    const [members, setMembers] = useState([]);
-    const { register, handleSubmit, setValue, watch,formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             members: []
         }
     })
     const token = user?.token;
+    const [members, setMembers] = useState<string[]>([]);
 
     useEffect(() => {
         const getAllUsers = async () => {
@@ -44,6 +43,7 @@ export const Channel = () => {
         data["members"] = members;
         console.log("Channel to create: ", data)
         const token = user?.token;
+        console.log("Channel to create: ", data);
 
         try {
             const response = await api.post('/channel', data, {
@@ -52,9 +52,25 @@ export const Channel = () => {
                 },
             });
             console.log("Channel to create: ", response.data);
+            // TODO: redirect to the channel that has been created.
+            router.push("/message")
         }  catch(error){
             alert(error)
         }
+    };
+
+    useEffect(() => {
+        console.log("les members selectionnés: ", members);
+    }, [members]);
+
+    const handleOptionChange = (value) => {
+        setMembers((prevMembers) => {
+            if (prevMembers.includes(value)) {
+                return prevMembers.filter((option) => option !== value);
+            } else {
+                return [...prevMembers, value];
+            }
+        });
     };
 
     return(
@@ -78,6 +94,12 @@ export const Channel = () => {
                               d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
 
+                    <FontAwesomeIcon
+                        icon={faMessage}
+                        className={styles.icons}
+                        style={{ width: 15, color: "black" }}
+                        onClick={() => {router.push("/message")}}
+                    />
 
                     <button
                         className={styles.logoutButton + " logoutButton"}
@@ -114,24 +136,20 @@ export const Channel = () => {
                     <label htmlFor="members" className={styles.label}>
                         Member
                     </label>
-                    <select
-                        className={styles.select}
-                        id="members"
-                        name="members"
-                        onChange={({target}) => {
-                            const value = target.value;
-                            const newValue = new Set([parseInt(value), ...members]);
-                            console.log("members: ", newValue)
-                            setMembers(() => Array.from(newValue.values()))
-                        }}
-                    >
+                    {/* TODO: use checkbox for the member to add. */}
+                    {users.map(user => (
+                        <div key={user.id}>
+                            <input
+                                type="checkbox"
+                                id={user.id}
+                                value={user.id}
+                                checked={members.includes(user.id)}
+                                onChange={() => handleOptionChange(user.id)}
+                            />
+                            <label htmlFor={user.id}>{user.name}</label>
+                        </div>
+                    ))}
 
-                        {users.map((user) => (
-                            <option key={user.id} value={user.id}>
-                                {user.name}
-                            </option>
-                        ))}
-                    </select>
                     <div>
                         {
                             users.filter((user) => {

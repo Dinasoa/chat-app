@@ -1,12 +1,15 @@
 import styles from '@/styles/About.module.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAdd, faBlender, faLongArrowLeft, faLongArrowRight, faSearch, faUser} from "@fortawesome/free-solid-svg-icons";
+import {
+    faMessage,
+    faSearch,
+    faUser
+} from "@fortawesome/free-solid-svg-icons";
 import {useRouter} from "next/router";
 import {api} from "@/providers/api";
 import {useAuthStore} from "@/stores/auth-store";
-import {useEffect} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
-import {localStorageCheck} from "@/pages/message";
 
 // SWR: OPTIMISE LES TACHES ASYNCHRONES.
 // Execute les taches asynchrones.
@@ -14,8 +17,12 @@ import {localStorageCheck} from "@/pages/message";
 export default function Profile () {
     const {push} = useRouter();
     const {user, setUser} = useAuthStore();
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors }, watch } = useForm();
     const token = user?.token
+    const [users, setUsers] = useState({});
+    const password = useRef({});
+    password.current = watch('newPassword', '');
+    // const [errorMessage, setErrorMessage] = useState();
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
@@ -30,8 +37,9 @@ export default function Profile () {
                 }
             });
 
+            setUsers(response.data.user)
             console.log("User informations: ", response.data)
-            console.log("The user: ", user)
+            console.log("The user: ", users)
 
         } catch (error) {
             console.log("ERROR: ", error)
@@ -46,6 +54,7 @@ export default function Profile () {
                 }
             });
             setUser(response.data.user)
+            // TODO: afficher que l'utilisateur a bien été mis à jour
             console.log("User should have been updated: ", user)
             alert("User has been updated successfully. " )
             console.log("DATA", response.data)
@@ -64,7 +73,7 @@ export default function Profile () {
         <>
             <nav className={styles.navbar}>
                 <div className={styles.searchBar}>
-                    <input type="text" placeholder="Rechercher..." />
+                    <input type="text" value="Rechercher..." />
 
                     <button>
                         <FontAwesomeIcon
@@ -74,6 +83,9 @@ export default function Profile () {
                         />
                     </button>
 
+                    <label>
+                        {users?.name}
+                    </label>
                     <FontAwesomeIcon
                         className={styles.icons}
                         icon={faUser}
@@ -81,7 +93,7 @@ export default function Profile () {
                         // onClick={displayUser}
                     />
                     <FontAwesomeIcon
-                        icon={faLongArrowLeft}
+                        icon={faMessage}
                         className={styles.icons}
                         style={{ width: 15, color: "black" }}
                         onClick={() => {push("/message")}}
@@ -112,7 +124,7 @@ export default function Profile () {
                         className={styles.input}
                         id="email"
                         name="email"
-                        value={user?.email}
+                        value={users?.email}
                         {...register("email")}
                     />
                     <label htmlFor="name" className={styles.label}>
@@ -122,7 +134,7 @@ export default function Profile () {
                         className={styles.input}
                         id="name"
                         name="name"
-                        placeholder={user?.name}
+                        placeholder={users?.name}
                         {...register("name")}
                     />
                     <label htmlFor="bio" className={styles.label}>
@@ -131,7 +143,7 @@ export default function Profile () {
                     <textarea
                         name="bio"
                         id="bio"
-                        placeholder="bio"
+                        placeholder={users?.bio}
                         {...register("bio")}
                     >
                     </textarea>
@@ -151,10 +163,22 @@ export default function Profile () {
                     <input
                         className={styles.input}
                         type="password"
-                        id="password"
+                        id="newPassword"
                         name="newPassword"
-                        {...register("newPassword", {minLength: 8})}
                     />
+                    <label htmlFor="password" className={styles.label}>
+                        Confirm Password
+                    </label>
+                    <input
+                        className={styles.input}
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        {...register('confirmPassword', {
+                            validate: (value) => value === password.current || 'Le mot de passe ne correspond pas. ',
+                        })}
+                    />
+                    {errors.confirmPassword && <p style={{color: "red"}}>{errors.confirmPassword.message}</p>}
                     <button className={styles.button + " updateProfileButton"} onClick={updateUserInfo}>UPDATE</button>
                 </div>
             </form>
