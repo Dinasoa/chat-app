@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import Link from "next/link";
 import {api} from "@/providers/api";
 import {useAuthStore} from "@/stores/auth-store";
-import {useRef} from "react";
+import {useRef, useEffect} from "react";
 
 export default function SignUp() {
     const router = useRouter();
@@ -12,6 +12,15 @@ export default function SignUp() {
     const {setUser, user} = useAuthStore();
     const password = useRef({});
     password.current = watch('password', '');
+
+    useEffect(() => {
+        const existingInfo = localStorage.getItem('userInfo');
+        if(existingInfo){
+            router.push("/profile")
+        } else {
+            router.push("/sign-up")
+        }
+    }, []);
 
     const onSubmit = async (data) => {
         try {

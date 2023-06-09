@@ -4,7 +4,7 @@ import {NextRouter, useRouter} from "next/router";
 import {useForm} from "react-hook-form";
 import {useAuthStore} from "@/stores/auth-store";
 import {api} from "@/providers/api";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {bool} from "yup";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDisplay} from "@fortawesome/free-solid-svg-icons";
@@ -18,12 +18,22 @@ export default function Login() {
     const handleToggle = () => {
         setShowPassword(!showPassword)
     }
+
+    useEffect(() => {
+        const existingInfo = localStorage.getItem('userInfo');
+        if(existingInfo){
+            router.push("/profile")
+        } else {
+            router.push("/login")
+        }
+    }, []);
+
      const onSubmit = async (data) => {
         try {
             const response = await api.post('/users/login', data);
             console.log("RESPONSE: ", response.data);
             // localStorage.setItem('userInfo', JSON.stringify(data));
-            localStorage.setItem("user", JSON.stringify(response.data.user))
+            localStorage.setItem("userInfo", JSON.stringify(response.data.user))
             console.log("LOCAL STORAGE: ",localStorage.getItem("user "))
             setUser(response.data.user)
             console.log("This is the user: ", user)
