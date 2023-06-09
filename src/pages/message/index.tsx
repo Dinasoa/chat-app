@@ -265,9 +265,12 @@ const  Board = () =>  {
                         <div className={styles.directMessage}>
                             <h3>Users: </h3>
                             {users.map((user) => (
-                                <li key={user?.id} onClick={() => directMessage(user?.id)}
-                                    className={styles.userDirectMessage + " userDirectMessage"}>{user.name}
-                                </li>
+                                // <li key={user?.id} onClick={() => directMessage(user?.id)}
+                                //     className={styles.userDirectMessage + " userDirectMessage"}>{user.name}
+                                // </li>
+                                <Link href={`/message/${user.id}`} >
+                                    <p className={styles.channelButton}>{user.name}</p>
+                                </Link>
                             ))}
                         </div>
                         <ul>
