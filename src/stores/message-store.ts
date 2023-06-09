@@ -7,7 +7,7 @@ type Store = {
 };
 
 type Action = {
-    setMessage: (messages: { recipientId: string | string[] | undefined; channelId: null; content: string }) => void;
+    setMessage: (messages: { recipientId: null; channelId: string | string[] | undefined; content: string }) => void;
     setMessages: (message: Messages) => void;
 };
 

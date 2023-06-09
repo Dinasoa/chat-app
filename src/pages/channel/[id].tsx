@@ -1,14 +1,14 @@
 import {useRouter} from "next/router";
-import {api} from "@/providers/api";
 import {useAuthStore} from "@/stores/auth-store";
 import {useMessageStore} from "@/stores/message-store";
+import {ChangeEvent, useEffect, useState} from "react";
+import {api} from "@/providers/api";
 import styles from "@/styles/Chat.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAdd, faMessage, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faMessage, faSearch} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import {ChangeEvent, useEffect, useState} from "react";
 
-const DirectMessage = () => {
+export const ChannelMessage = () => {
     const router = useRouter()
     const {id} = router.query;
     const {user} = useAuthStore();
@@ -41,27 +41,27 @@ const DirectMessage = () => {
     }, [])
 
     useEffect(() => {
-        const getDirectMessage = async () => {
+        const getChannelMessage = async () => {
             try{
-                const responses = await api.get(`/messages/${id}`,{
+                const responses = await api.get(`/messages/channel/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 })
                 setMessages(responses.data);
-                console.log("messages: ", responses.data)
-            } catch (error) {
+                console.log("Channel Message: ", responses.data)
+            } catch(error){
                 alert(error)
             }
         }
-        getDirectMessage()
+        getChannelMessage()
     }, [])
 
 
     const saveMessage = (event:ChangeEvent<HTMLInputElement>) => {
         const message = {
-            "channelId": null,
-            "recipientId": id,
+            "channelId": id,
+            "recipientId": null,
             "content": event.target.value
         }
         setMessage(message);
@@ -75,14 +75,13 @@ const DirectMessage = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-
-            const allMessages = await api.get(`/messages/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+            const allMessages = await api.get(`/messages/channel/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             })
-                setMessages(allMessages.data)
-                console.log("Message sent: ", messagesToCreate.data)
+            console.log("CurrentChannelId: " ,id)
+            setMessages(allMessages.data)
         } catch (error) {
             alert("There is an error. ")
         }
@@ -130,18 +129,19 @@ const DirectMessage = () => {
                         <div>
                             {
                                 users.map((user) => {
-                                     if(user.id == id){
-                                         return <p>{user.name}</p>
-                                     }
+                                    if(user.id == id){
+                                        return <p>{user.name}</p>
+                                    }
                                 })
                             }
                         </div>
                     </aside>
 
                     <main className={styles.chat}>
-
+                        <Link href={`/channel/edit/${id}`} >
+                            <button className={styles.channelButton}> Edit current channel</button>
+                        </Link>
                         <div >
-
                             {
                                 messages?.messages?.length >= 1 ?
                                     <div className={styles.chatHistory}>
@@ -172,4 +172,4 @@ const DirectMessage = () => {
 
 }
 
-export default DirectMessage;
+export default ChannelMessage;

@@ -15,6 +15,7 @@ const ChannelEdit = () => {
     const {handleSubmit, register} = useForm();
     const [users, setUsers] = useState([]);
     const [members, setMembers] = useState<string[]>([]);
+    const [successMessage, setSuccessMessage] = useState<string>("");
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
@@ -31,6 +32,7 @@ const ChannelEdit = () => {
                 }
             })
             console.log(responses);
+            setSuccessMessage("Votre mis à jour a été bien pris en compte. ")
         } catch (error) {
             alert(error)
         }
@@ -115,7 +117,7 @@ const ChannelEdit = () => {
                                 checked={members.includes(user.id)}
                                 onChange={() => handleOptionChange(user.id)}
                             />
-                            <label htmlFor={user.id}>{user.name}</label>
+                            <label htmlFor={user.id} style={{color:"black", fontWeight:"bold"}}>{user.name}</label>
                         </div>
                     ))}
 
@@ -125,7 +127,7 @@ const ChannelEdit = () => {
                                 return members.includes(user.id)
                             }).map(user => {
                                 return(
-                                    <li key={user.id}>
+                                    <li key={user.id} style={{color:"white"}}>
                                         {user.name}
                                     </li>
                                 )
@@ -133,8 +135,9 @@ const ChannelEdit = () => {
                         }
                     </div>
 
-                    <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Add member(s)
-                    </button>
+                    {successMessage != "" ? successMessage : ""}
+
+                    <button className={styles.button} onClick={handleSubmit(addMembersInChannel)}>Add member(s)</button>
                 </div>
             </form>
         </>

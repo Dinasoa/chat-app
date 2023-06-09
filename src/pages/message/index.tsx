@@ -202,24 +202,6 @@ const  Board = () =>  {
         }
     }
 
-    const directMessage = async (id) => {
-        console.log("The current recipient id is: ", recipientId);
-        console.log("The current channel id is: ", currentChannelId);
-        setCurrentChannelId(null);
-        setRecipientId(id);
-        try{
-            const responses = await api.get(`/messages/${id}`,{
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            setMessages(responses.data);
-            console.log("messages: ", responses.data)
-        } catch (error) {
-            alert(error)
-        }
-    }
-
     return (
         <>
             <div>
@@ -265,9 +247,6 @@ const  Board = () =>  {
                         <div className={styles.directMessage}>
                             <h3>Users: </h3>
                             {users.map((user) => (
-                                // <li key={user?.id} onClick={() => directMessage(user?.id)}
-                                //     className={styles.userDirectMessage + " userDirectMessage"}>{user.name}
-                                // </li>
                                 <Link href={`/message/${user.id}`} >
                                     <p className={styles.channelButton}>{user.name}</p>
                                 </Link>
@@ -276,11 +255,9 @@ const  Board = () =>  {
                         <ul>
                             <h3>Channels: </h3>
                             {channels?.map((channel) => (
-                                <li className={styles.li} key={channel.id} onClick={() => {
-                                    getChannelById(channel.id)
-                                }}>
-                                    {channel.name}_{channel.id} #
-                                </li>
+                                <Link href={`/channel/${channel.id}`} >
+                                <p className={styles.channelButton}>{channel.name}_{channel.id}</p>
+                                </Link>
                             ))}
                         </ul>
                     </aside>
@@ -310,37 +287,8 @@ const  Board = () =>  {
                                 </div>
                                 : null
                             }
-
-                            {
-                                messages?.messages?.length >= 1 && currentChannelId != undefined || recipientId != undefined ?
-                                    <div className={styles.chatHistory}>
-
-                                        {recipientId != undefined && currentChannelId == undefined ?
-                                            <h1> Direct Message: {recipientId} </h1>
-                                            :
-                                            <div>
-                                                <h1> You are in the channel number_{currentChannelId} </h1>
-                                            </div>
-                                        }
-
-                                        {
-                                            messages?.messages?.map(message =>
-                                                <p>
-                                                    {message.sender.name}:
-                                                    {message.content}
-                                                </p>
-                                            )
-                                        }
-                                    </div>
-                                    : <p>No message to display</p>
-                            }
                         </div>
 
-                        <div className={styles.chatInput}>
-                            <textarea className={styles.textarea} type="text" name="message"
-                                      placeholder="Type a message..." onChange={saveMessage}></textarea>
-                            <button className={styles.sendMessageButton + " sendMessageButton"} onClick={sendMessage}>Send</button>
-                        </div>
                     </main>
                 </div>
             </div>
