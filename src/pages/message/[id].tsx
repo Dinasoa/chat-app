@@ -12,7 +12,10 @@ const DirectMessage = () => {
     const router = useRouter()
     const {id} = router.query;
     const {user} = useAuthStore();
-    const token = user?.token;
+    // const userJSON = localStorage.getItem('user');
+    // const parseUser = JSON.parse(userJSON);
+    // const token = parseUser?.token;
+    const token = user?.token
     const { messages, message, setMessage, setMessages} = useMessageStore();
     const [users, setUsers] = useState<>([]);
 

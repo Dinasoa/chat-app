@@ -6,6 +6,7 @@ import {useForm} from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMessage, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {useRouter} from "next/router";
+import Link from "next/link";
 
 export const Channel = () => {
     const router = useRouter();
@@ -54,7 +55,7 @@ export const Channel = () => {
             console.log("Channel to create: ", response.data);
             // TODO: redirect to the channel that has been created.
 
-            router.push("/message")
+            router.push(`/channel/${response.data.channel.id}`)
         }  catch(error){
             alert(error)
         }

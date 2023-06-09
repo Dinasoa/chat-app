@@ -22,7 +22,9 @@ export default function Login() {
         try {
             const response = await api.post('/users/login', data);
             console.log("RESPONSE: ", response.data);
-            localStorage.setItem('userInfo', JSON.stringify(data));
+            // localStorage.setItem('userInfo', JSON.stringify(data));
+            localStorage.setItem("user", JSON.stringify(response.data.user))
+            console.log("LOCAL STORAGE: ",localStorage.getItem("user "))
             setUser(response.data.user)
             console.log("This is the user: ", user)
             await router.push("/profile");

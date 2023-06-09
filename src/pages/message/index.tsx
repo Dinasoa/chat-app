@@ -18,12 +18,10 @@ const  Board = () =>  {
     const { user } = useAuthStore();
     const { messages, message, setMessage, setMessages} = useMessageStore();
     const [channels, setChannels] = useState([]);
-    const [showCreateChannel, setShowCreateChannel] = useState(false);
     const [showAddMembers, setShowAddMembers] = useState(false);
     const [showUpdateChannel, setShowUpdateChannel] = useState(false);
     const token = user?.token;
     const [users, setUsers] = useState([]);
-    const [members, setMembers] = useState([]);
     const [membersToAdd, setMembersToAdd] = useState([]);
     const { register, handleSubmit, setValue, watch,formState: { errors } } = useForm({
         defaultValues: {
@@ -40,10 +38,6 @@ const  Board = () =>  {
 
     const createChannelForm = () => {
         router.push("/channel/create")
-    }
-
-    const showAddMembersForm = () => {
-        setShowAddMembers(true);
     }
 
     const showUpdateChannelForm = () => {
@@ -73,23 +67,8 @@ const  Board = () =>  {
         getChannels();
     }, []);
 
-    useEffect(() => {
-        if(recipientId != undefined || recipientId != null){
-            setCurrentChannelId(null)
-            directMessage(recipientId)
-        }
-        if(currentChannelId != null || currentChannelId != undefined){
-            setRecipientId(null)
-            getChannelMessage(currentChannelId);
-        }
-    }, [recipientId])
-
     const displayUser = () => {
         router.push("/profile");
-    };
-
-    const undisplayUser = () => {
-        setShowCreateChannel(false);
     };
 
     const getChannelById = async (channelId) => {
@@ -144,47 +123,6 @@ const  Board = () =>  {
             console.log(responses);
         }catch(error){
             alert("Error from the request: " + error);
-        }
-    }
-
-
-    const saveMessage = (event:ChangeEvent<HTMLInputElement>) => {
-        const message = {
-            "channelId": currentChannelId != null ? currentChannelId : null,
-            "recipientId": recipientId != null ? recipientId : null,
-            "content": event.target.value
-        }
-        setMessage(message);
-    }
-
-    const sendMessage = async () => {
-        try{
-            const messagesToCreate = await api.post("/message", message, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            if(currentChannelId != null ){
-                const allMessages = await api.get(`/messages/channel/${currentChannelId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                console.log("CurrentChannelId: " ,currentChannelId)
-                setMessages(allMessages.data)
-            }
-            // TODO: de meme pour celle-la
-            if(recipientId != null){
-                const allMessages = await api.get(`/messages/${recipientId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                setMessages(allMessages.data)
-                console.log("Message sent: ", messagesToCreate.data)
-            }
-        } catch (error) {
-            alert("There is an error. ")
         }
     }
 

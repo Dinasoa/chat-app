@@ -14,31 +14,30 @@ export const ChannelMessage = () => {
     const {user} = useAuthStore();
     const token = user?.token;
     const { messages, message, setMessage, setMessages} = useMessageStore();
-    const [users, setUsers] = useState<>([]);
+    const [channels, setChannels] = useState([]);
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
         router.push("/login")
     }
 
-    useEffect(() => {
-        const getAllUsers = async () => {
-            try {
-                const response = await api.get('/users', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                console.log("All users: ", response.data);
-                console.log("Users: " , response.data.users)
-                setUsers(response.data.users);
-            } catch (error) {
-                console.log("BEARER: ", token);
-                console.log("ERROR: ", error);
-            }
-        };
-        getAllUsers();
-    }, [])
+    const getChannels = async () => {
+        const token = user?.token;
+
+        try {
+            const response = await api.get('/channels', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log("All channels: ", response.data);
+            setChannels(response.data.channels);
+            router.push("/message");
+        } catch (error) {
+            console.log("BEARER: ", token);
+            console.log("ERROR: ", error);
+        }
+    };
 
     useEffect(() => {
         const getChannelMessage = async () => {
@@ -127,13 +126,7 @@ export const ChannelMessage = () => {
                 <div className={styles.container}>
                     <aside className={styles.sidebar}>
                         <div>
-                            {
-                                users.map((user) => {
-                                    if(user.id == id){
-                                        return <p>{user.name}</p>
-                                    }
-                                })
-                            }
+                          {/*TODO: add the channel name here*/}
                         </div>
                     </aside>
 
