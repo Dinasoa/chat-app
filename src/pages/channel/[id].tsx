@@ -14,30 +14,11 @@ export const ChannelMessage = () => {
     const {user} = useAuthStore();
     const token = user?.token;
     const { messages, message, setMessage, setMessages} = useMessageStore();
-    const [channels, setChannels] = useState([]);
 
     const deconnect = () => {
         localStorage.removeItem("userInfo");
         router.push("/login")
     }
-
-    const getChannels = async () => {
-        const token = user?.token;
-
-        try {
-            const response = await api.get('/channels', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            console.log("All channels: ", response.data);
-            setChannels(response.data.channels);
-            router.push("/message");
-        } catch (error) {
-            console.log("BEARER: ", token);
-            console.log("ERROR: ", error);
-        }
-    };
 
     useEffect(() => {
         const getChannelMessage = async () => {

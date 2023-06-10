@@ -40,10 +40,6 @@ const  Board = () =>  {
         router.push("/channel/create")
     }
 
-    const showUpdateChannelForm = () => {
-        setShowUpdateChannel(true);
-    }
-
     const getChannels = async () => {
         const token = user?.token;
 
@@ -67,7 +63,7 @@ const  Board = () =>  {
         getChannels();
     }, []);
 
-    const displayUser = () => {
+    const displayUserProfile = () => {
         router.push("/profile");
     };
 
@@ -103,29 +99,6 @@ const  Board = () =>  {
         }
     };
 
-    const undispalyUserModal = () => {
-        setShowAddMembers(false)
-    }
-
-    const addMembersInChannel = async (data) => {
-        setShowAddMembers(false);
-
-        data["members"] = membersToAdd;
-        console.log("Members to add in the current channel: ", data);
-
-        try{
-            // TODO: edit channel type
-            const responses = await api.post(`/channels/${currentChannelId}/members`, data, {
-                "headers": {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            console.log(responses);
-        }catch(error){
-            alert("Error from the request: " + error);
-        }
-    }
-
     const getChannelMessage = async (channelId) => {
         try{
             const responses = await api.get(`/messages/channel/${channelId}`, {
@@ -157,7 +130,7 @@ const  Board = () =>  {
 
                         {user?.name}
 
-                        <svg style={{width: 30}} onClick={displayUser} xmlns="http://www.w3.org/2000/svg" fill="none"
+                        <svg style={{width: 30}} onClick={displayUserProfile} xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={styles.icons}>
                             <path strokeLinecap="round" strokeLinejoin="round"
                                   d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -179,7 +152,7 @@ const  Board = () =>  {
                             <FontAwesomeIcon
                                 icon={faAdd}
                                 style={{width: 10, color: "white"}}
-                                onClick={displayUser}
+                                onClick={displayUserProfile}
                             />
                         </button>
                         <div className={styles.directMessage}>
@@ -210,21 +183,6 @@ const  Board = () =>  {
                                     </h1> : <h1></h1>
                                 }
                             </h1>
-                            {currentChannelId != undefined ?
-                                <div>
-                                    <Link href={`/channel/edit/${currentChannelId}`} >
-                                        <button className={styles.channelButton}> Edit current channel</button>
-                                    </Link>
-                                    <button className={styles.channelButton} onClick={showUpdateChannelForm}>
-                                        Update current channel
-                                        <FontAwesomeIcon
-                                            icon={faAdd}
-                                            style={{width: 10, color: "white"}}
-                                        />
-                                    </button>
-                                </div>
-                                : null
-                            }
                         </div>
 
                     </main>
